@@ -1,119 +1,85 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Telegram Gift Spinner</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(180deg, #bf2cff, #ff8cf0);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      height: 100vh;
-      color: white;
-    }
+import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 
-    .header {
-      margin-top: 20px;
-      font-size: 32px;
-      font-weight: bold;
-      text-align: center;
-    }
+const nftImages = [
+  'https://ipfs.io/ipfs/QmXoypizjW3WknFiJnKLwHCnL72vedxjQkDDP1mXWo6uco',
+  'https://www.pngmart.com/files/23/Cute-NFT-PNG-File.png',
+  'https://www.pngmart.com/files/23/NFT-Art-PNG-Transparent.png'
+];
 
-    .wheel {
-      margin: 40px auto;
-      width: 150px;
-      height: 150px;
-      background: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
-      color: black;
-      font-size: 24px;
-    }
+const prizes = [
+  { name: 'Игровой токен', image: '🎮', chance: 0.99 },
+  { name: 'NFT Подарок', image: nftImages[0], chance: 0.01 }
+];
 
-    .chances {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 10px;
-    }
+export default function App() {
+  const [chanceMult, setChanceMult] = useState(1);
+  const [stars, setStars] = useState(1000);
+  const [spinning, setSpinning] = useState(false);
+  const [result, setResult] = useState(null);
+  const [inventory, setInventory] = useState([]);
 
-    .chances button {
-      background: rgba(255,255,255,0.2);
-      border: 2px solid white;
-      border-radius: 20px;
-      color: white;
-      padding: 5px 15px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+  const cost = 200 * chanceMult;
 
-    .spin-btn {
-      background: white;
-      color: #ff00cc;
-      padding: 15px 30px;
-      border: none;
-      border-radius: 40px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 20px;
-    }
+  const spin = () => {
+    if (spinning || stars < cost) return;
+    setStars(prev => prev - cost);
+    setSpinning(true);
+    setResult(null);
 
-    .footer {
-      text-align: center;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-  </style>
-</head>
-<body>
-  <div class="header">
-    🎉 Happy B-day 🎉
-  </div>
+    setTimeout(() => {
+      const roll = Math.random();
+      let cumulative = 0;
+      let prize;
+      for (let i = 0; i < prizes.length; i++) {
+        cumulative += prizes[i].chance;
+        if (roll <= cumulative) {
+          prize = prizes[i];
+          break;
+        }
+      }
+      if (!prize) prize = prizes[0];
+      setInventory(prev => [...prev, prize]);
+      setResult(prize);
+      setSpinning(false);
+    }, 2000);
+  };
 
-  <div class="wheel" id="wheel">
-    🎁
-  </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-purple-600 to-pink-400 text-white flex flex-col items-center justify-between py-8 px-4">
+      <h1 className="text-3xl font-bold">🎉 Happy B-day 🎉</h1>
 
-  <div class="chances">
-    <button onclick="setChance(1)">1X ШАНС</button>
-    <button onclick="setChance(10)">10X</button>
-    <button onclick="setChance(100)">100X</button>
-  </div>
+      <div className="w-40 h-40 bg-white rounded-full shadow-lg flex items-center justify-center text-black text-xl">
+        {spinning ? '🔄' : result ? (result.image.startsWith('http') ? <img src={result.image} alt="nft" className="w-20 h-20" /> : result.image) : '🎁'}
+      </div>
 
-  <button class="spin-btn" onclick="spin()">
-    РАСКРУТИТЬ ЗА <span id="cost">200</span>⭐
-  </button>
+      <div className="flex space-x-2 mt-4">
+        <button onClick={() => setChanceMult(1)} className="bg-white bg-opacity-20 border border-white rounded-full px-4 py-1 font-bold">1X ШАНС</button>
+        <button onClick={() => setChanceMult(10)} className="bg-white bg-opacity-20 border border-white rounded-full px-4 py-1 font-bold">10X</button>
+        <button onClick={() => setChanceMult(100)} className="bg-white bg-opacity-20 border border-white rounded-full px-4 py-1 font-bold">100X</button>
+      </div>
 
-  <div class="footer">
-    🧸 Выигрыши в ПРЯМОМ ЭФИРЕ<br>@virus_play_bot
-  </div>
+      <button onClick={spin} className="bg-white text-pink-600 font-bold text-lg rounded-full px-6 py-3 mt-6">
+        РАСКРУТИТЬ ЗА {cost}⭐
+      </button>
 
-  <script>
-    let chance = 1;
-    const wheel = document.getElementById('wheel');
-    const costDisplay = document.getElementById('cost');
+      <div className="text-sm text-center mt-4">🧸 Выигрыши в ПРЯМОМ ЭФИРЕ<br />@virus_play_bot</div>
 
-    function setChance(mult) {
-      chance = mult;
-      costDisplay.innerText = 200 * mult;
-    }
+      <div className="bg-white bg-opacity-10 p-4 rounded-lg mt-6 w-full max-w-sm">
+        <h2 className="text-xl font-bold mb-2">📦 Инвентарь</h2>
+        {inventory.length === 0 ? <p>Пусто</p> : (
+          <div className="grid grid-cols-3 gap-2">
+            {inventory.map((item, idx) => (
+              <div key={idx} className="text-center text-xs">
+                {item.image.startsWith('http') ? <img src={item.image} alt={item.name} className="w-16 h-16 mx-auto" /> : item.image}
+                <div>{item.name}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
-    function spin() {
-      wheel.innerText = '🔄';
-      setTimeout(() => {
-        const prize = Math.random() < 0.01 ? '🎁 NFT!' : '🎮 Игровой токен';
-        wheel.innerText = prize;
-      }, 2000);
-    }
-  </script>
-</body>
-</html>
+      <div className="mt-4 text-white">⭐ Звёзды: {stars}</div>
+    </div>
+  );
+}
