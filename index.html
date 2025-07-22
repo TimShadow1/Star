@@ -3,54 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Gift Spinner</title>
+    <title>HTSpinner</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f5f5f5;
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
             margin: 0;
             padding: 0;
-            color: #333;
+            color: white;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
         
         .container {
-            max-width: 500px;
-            margin: 0 auto;
+            width: 100%;
+            max-width: 400px;
             padding: 20px;
-            background-color: white;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            margin-top: 20px;
+            box-sizing: border-box;
         }
         
-        header {
+        .header {
             text-align: center;
             margin-bottom: 20px;
         }
         
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #0088cc;
+        .header h1 {
+            font-size: 28px;
+            margin: 0;
+            color: #f8c537;
         }
         
-        .user-info {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            padding: 10px;
-            background-color: #f0f8ff;
-            border-radius: 8px;
-        }
-        
-        .stars {
-            color: gold;
-            font-weight: bold;
-        }
-        
-        .tokens {
-            color: #4CAF50;
-            font-weight: bold;
+        .header h2 {
+            font-size: 18px;
+            margin: 5px 0 0;
+            color: #e94560;
         }
         
         .wheel-container {
@@ -65,27 +54,22 @@
             height: 100%;
             border-radius: 50%;
             background: conic-gradient(
-                #FF5733 0% 10%,
-                #33FF57 10% 20%,
-                #3357FF 20% 30%,
-                #F333FF 30% 40%,
-                #FF33F3 40% 50%,
-                #33FFF5 50% 60%,
-                #FFC733 60% 70%,
-                #8C33FF 70% 80%,
-                #33FFBD 80% 90%,
-                #FF5733 90% 100%
+                #e94560 0% 25%,
+                #00b4d8 25% 50%,
+                #f8c537 50% 75%,
+                #2dc59f 75% 100%
             );
             position: relative;
             transition: transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99);
             transform: rotate(0deg);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
         }
         
         .wheel-center {
             position: absolute;
-            width: 50px;
-            height: 50px;
-            background-color: white;
+            width: 60px;
+            height: 60px;
+            background-color: #1a1a2e;
             border-radius: 50%;
             top: 50%;
             left: 50%;
@@ -96,7 +80,11 @@
             font-weight: bold;
             cursor: pointer;
             z-index: 2;
-            box-shadow: 0 0 5px rgba(0,0,0,0.3);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            border: 2px solid #f8c537;
         }
         
         .wheel-center:active {
@@ -105,627 +93,386 @@
         
         .pointer {
             position: absolute;
-            top: -10px;
+            top: -15px;
             left: 50%;
             transform: translateX(-50%);
             width: 0;
             height: 0;
             border-left: 15px solid transparent;
             border-right: 15px solid transparent;
-            border-top: 30px solid #ff0000;
+            border-top: 30px solid #f8c537;
             z-index: 1;
+            filter: drop-shadow(0 0 5px rgba(248, 197, 55, 0.7));
+        }
+        
+        .wheel-label {
+            position: absolute;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
         }
         
         .spin-button {
             display: block;
             width: 200px;
-            margin: 0 auto 20px;
-            padding: 10px;
-            background-color: #0088cc;
+            margin: 0 auto;
+            padding: 12px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
             color: white;
             border: none;
-            border-radius: 5px;
+            border-radius: 25px;
             font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.4);
+            text-align: center;
         }
         
         .spin-button:hover {
-            background-color: #006699;
+            transform: translateY(-2px);
+            box-shadow: 0 7px 20px rgba(233, 69, 96, 0.6);
         }
         
         .spin-button:disabled {
-            background-color: #cccccc;
+            background: linear-gradient(135deg, #555, #777);
+            transform: none;
+            box-shadow: none;
             cursor: not-allowed;
         }
         
-        .daily-info {
+        .spin-cost {
+            font-size: 12px;
+            margin-top: 5px;
+            color: #ccc;
             text-align: center;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: #666;
         }
         
-        .shop {
+        .double-tap-hint {
+            font-size: 12px;
+            margin-top: 10px;
+            color: #f8c537;
+            text-align: center;
+            font-style: italic;
+        }
+        
+        .live-wins {
             margin-top: 30px;
+            padding: 15px;
+            background-color: rgba(26, 26, 46, 0.7);
+            border-radius: 10px;
+            border: 1px solid #f8c537;
         }
         
-        .shop h2 {
+        .live-wins h3 {
+            margin: 0 0 10px;
             text-align: center;
-            margin-bottom: 15px;
+            color: #f8c537;
         }
         
-        .shop-items {
+        .wins-list {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        
+        .win-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             display: flex;
-            justify-content: space-around;
-            flex-wrap: wrap;
+            justify-content: space-between;
         }
         
-        .shop-item {
-            width: 120px;
-            padding: 10px;
-            margin-bottom: 15px;
-            background-color: #f9f9f9;
-            border-radius: 8px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s;
+        .win-item:last-child {
+            border-bottom: none;
         }
         
-        .shop-item:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        .win-user {
+            color: #00b4d8;
         }
         
-        .shop-item-price {
-            color: gold;
+        .win-amount {
+            color: #2dc59f;
             font-weight: bold;
         }
         
-        .inventory-button {
-            display: block;
-            width: 100%;
-            padding: 10px;
+        .bot-link {
             margin-top: 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
+            text-align: center;
+            color: #f8c537;
+            font-size: 14px;
         }
         
-        .inventory-button:hover {
-            background-color: #3e8e41;
-        }
-        
-        .modal {
+        .result-modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.8);
             z-index: 100;
             justify-content: center;
             align-items: center;
         }
         
-        .modal-content {
-            background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            max-width: 400px;
-            width: 90%;
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        .close-button {
-            float: right;
-            cursor: pointer;
-            font-size: 24px;
-        }
-        
-        .inventory-items {
-            margin-top: 20px;
-        }
-        
-        .inventory-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px;
-            border-bottom: 1px solid #eee;
-            align-items: center;
-        }
-        
-        .claim-button {
-            padding: 5px 10px;
-            background-color: #0088cc;
-            color: white;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-        }
-        
-        .result-modal {
+        .result-content {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+            padding: 30px;
+            border-radius: 15px;
+            width: 80%;
+            max-width: 300px;
             text-align: center;
+            border: 2px solid #f8c537;
+            box-shadow: 0 0 30px rgba(248, 197, 55, 0.5);
         }
         
         .result-icon {
-            font-size: 50px;
-            margin: 20px 0;
-        }
-        
-        .token-result {
-            color: #4CAF50;
-        }
-        
-        .gift-result {
-            color: #FF5733;
-        }
-        
-        .prize-amount {
-            font-size: 24px;
-            font-weight: bold;
-            margin: 10px 0;
-        }
-        
-        .tabs {
-            display: flex;
+            font-size: 60px;
             margin-bottom: 20px;
         }
         
-        .tab {
-            flex: 1;
-            text-align: center;
-            padding: 10px;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
+        .result-text {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #f8c537;
         }
         
-        .tab.active {
-            border-bottom: 2px solid #0088cc;
+        .result-amount {
+            font-size: 28px;
             font-weight: bold;
+            margin-bottom: 20px;
+            color: #2dc59f;
         }
         
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
-            display: block;
+        .close-result {
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #e94560, #ff6b6b);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <div class="logo">Telegram Gift Spinner</div>
-        </header>
-        
-        <div class="user-info">
-            <div>Stars: <span class="stars">0</span></div>
-            <div>Tokens: <span class="tokens">0</span></div>
+        <div class="header">
+            <h1>Пара</h1>
+            <h2>3-day</h2>
         </div>
         
-        <div class="tabs">
-            <div class="tab active" data-tab="spin">Spin</div>
-            <div class="tab" data-tab="shop">Shop</div>
-            <div class="tab" data-tab="inventory">Inventory</div>
-        </div>
-        
-        <div class="tab-content active" id="spin-tab">
-            <div class="wheel-container">
-                <div class="pointer"></div>
-                <div class="wheel" id="wheel"></div>
-                <div class="wheel-center" id="spin-button">SPIN</div>
+        <div class="wheel-container">
+            <div class="pointer"></div>
+            <div class="wheel" id="wheel">
+                <div class="wheel-label" style="top: 20%; left: 70%; transform: rotate(45deg);">1X ШАНС</div>
+                <div class="wheel-label" style="top: 20%; left: 30%; transform: rotate(-45deg);">10X</div>
+                <div class="wheel-label" style="top: 70%; left: 30%; transform: rotate(-135deg);">100X</div>
+                <div class="wheel-label" style="top: 70%; left: 70%; transform: rotate(135deg);">РАСКРУТИТЬ ЗА 200</div>
             </div>
-            
-            <div class="daily-info">
-                Free spins reset in: <span id="timer">00:00:00</span><br>
-                Free spins today: <span id="free-spins">3</span>/3
-            </div>
+            <div class="wheel-center" id="spin-button">Двойной тап<br>для быстрого<br>кручения</div>
         </div>
         
-        <div class="tab-content" id="shop-tab">
-            <div class="shop">
-                <h2>Star Shop</h2>
-                <div class="shop-items">
-                    <div class="shop-item" data-multiplier="100" data-cost="10">
-                        <div class="shop-item-name">100x Multiplier</div>
-                        <div class="shop-item-price">10 stars</div>
-                    </div>
-                    <div class="shop-item" data-multiplier="1000" data-cost="100">
-                        <div class="shop-item-name">1000x Multiplier</div>
-                        <div class="shop-item-price">100 stars</div>
-                    </div>
-                    <div class="shop-item" data-multiplier="10000" data-cost="1000">
-                        <div class="shop-item-name">10000x Multiplier</div>
-                        <div class="shop-item-price">1000 stars</div>
-                    </div>
+        <button class="spin-button" id="spin-button-main">РАСКРУТИТЬ ЗА 200</button>
+        <div class="spin-cost">Баланс: <span id="balance">1000</span></div>
+        <div class="double-tap-hint">двойной тап для быстрого кручения</div>
+        
+        <div class="live-wins">
+            <h3>ВЫИГРЫШИ В ПРЯМОМ ЭФИРЕ</h3>
+            <div class="wins-list" id="wins-list">
+                <!-- Wins will be added here dynamically -->
+                <div class="win-item">
+                    <span class="win-user">User123</span>
+                    <span class="win-amount">100X</span>
+                </div>
+                <div class="win-item">
+                    <span class="win-user">Player456</span>
+                    <span class="win-amount">10X</span>
+                </div>
+                <div class="win-item">
+                    <span class="win-user">SpinnerPro</span>
+                    <span class="win-amount">1X ШАНС</span>
                 </div>
             </div>
         </div>
         
-        <div class="tab-content" id="inventory-tab">
-            <h2>Your Inventory</h2>
-            <div class="inventory-items" id="inventory-items">
-                <!-- Items will be added here dynamically -->
-                <p>No items yet. Spin the wheel to get gifts!</p>
-            </div>
-        </div>
+        <div class="bot-link">@virus_play_bot</div>
     </div>
     
-    <!-- Inventory Modal -->
-    <div class="modal" id="inventory-modal">
-        <div class="modal-content">
-            <span class="close-button">&times;</span>
-            <h2>Your Gifts</h2>
-            <div class="inventory-items" id="modal-inventory-items">
-                <!-- Items will be added here dynamically -->
-                <p>No gifts yet. Keep spinning!</p>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Result Modal -->
-    <div class="modal" id="result-modal">
-        <div class="modal-content result-modal">
-            <div class="result-icon" id="result-icon">🎁</div>
-            <div id="result-message">You won!</div>
-            <div class="prize-amount" id="prize-amount">100 tokens</div>
-            <button id="close-result">OK</button>
+    <div class="result-modal" id="result-modal">
+        <div class="result-content">
+            <div class="result-icon" id="result-icon">🎉</div>
+            <div class="result-text" id="result-text">ПОЗДРАВЛЯЕМ!</div>
+            <div class="result-amount" id="result-amount">10X</div>
+            <button class="close-result" id="close-result">OK</button>
         </div>
     </div>
     
     <script>
-        // Game state
-        const state = {
-            stars: 0,
-            tokens: 0,
-            freeSpins: 3,
-            lastSpinDate: null,
-            inventory: [],
-            multipliers: {
-                token: 1
-            }
+        // Game configuration
+        const config = {
+            spinCost: 200,
+            initialBalance: 1000,
+            segments: [
+                { label: "1X ШАНС", color: "#e94560", multiplier: 1, weight: 40 },
+                { label: "10X", color: "#00b4d8", multiplier: 10, weight: 35 },
+                { label: "100X", color: "#f8c537", multiplier: 100, weight: 20 },
+                { label: "РАСКРУТИТЬ ЗА 200", color: "#2dc59f", multiplier: 0, weight: 5 }
+            ]
         };
         
-        // Prize segments
-        const prizes = [
-            { type: 'token', amount: 10, color: '#FF5733', text: '10 Tokens' },
-            { type: 'token', amount: 20, color: '#33FF57', text: '20 Tokens' },
-            { type: 'token', amount: 50, color: '#3357FF', text: '50 Tokens' },
-            { type: 'token', amount: 100, color: '#F333FF', text: '100 Tokens' },
-            { type: 'token', amount: 200, color: '#FF33F3', text: '200 Tokens' },
-            { type: 'token', amount: 500, color: '#33FFF5', text: '500 Tokens' },
-            { type: 'token', amount: 1000, color: '#FFC733', text: '1000 Tokens' },
-            { type: 'token', amount: 2000, color: '#8C33FF', text: '2000 Tokens' },
-            { type: 'token', amount: 5000, color: '#33FFBD', text: '5000 Tokens' },
-            { type: 'gift', amount: 1, color: '#FF5733', text: 'GIFT!' }
-        ];
+        // Game state
+        const state = {
+            balance: config.initialBalance,
+            isSpinning: false,
+            wins: [
+                { user: "User123", amount: "100X" },
+                { user: "Player456", amount: "10X" },
+                { user: "SpinnerPro", amount: "1X ШАНС" }
+            ]
+        };
         
         // DOM elements
         const wheel = document.getElementById('wheel');
         const spinButton = document.getElementById('spin-button');
-        const starsDisplay = document.querySelector('.stars');
-        const tokensDisplay = document.querySelector('.tokens');
-        const freeSpinsDisplay = document.getElementById('free-spins');
-        const timerDisplay = document.getElementById('timer');
-        const inventoryItems = document.getElementById('inventory-items');
-        const modalInventoryItems = document.getElementById('modal-inventory-items');
-        const inventoryModal = document.getElementById('inventory-modal');
+        const spinButtonMain = document.getElementById('spin-button-main');
+        const balanceDisplay = document.getElementById('balance');
+        const winsList = document.getElementById('wins-list');
         const resultModal = document.getElementById('result-modal');
         const resultIcon = document.getElementById('result-icon');
-        const resultMessage = document.getElementById('result-message');
-        const prizeAmount = document.getElementById('prize-amount');
+        const resultText = document.getElementById('result-text');
+        const resultAmount = document.getElementById('result-amount');
         const closeResult = document.getElementById('close-result');
-        const tabs = document.querySelectorAll('.tab');
-        const tabContents = document.querySelectorAll('.tab-content');
-        
-        // Shop items
-        const shopItems = document.querySelectorAll('.shop-item');
         
         // Initialize the game
         function initGame() {
-            loadState();
             updateUI();
             setupWheel();
-            startTimer();
             
-            // Check if we need to reset free spins
-            checkDailyReset();
-        }
-        
-        // Load game state from localStorage
-        function loadState() {
-            const savedState = localStorage.getItem('telegramGiftSpinnerState');
+            // Load saved state if available
+            const savedState = localStorage.getItem('htSpinnerState');
             if (savedState) {
                 Object.assign(state, JSON.parse(savedState));
-                
-                // Convert old string date to Date object
-                if (state.lastSpinDate && typeof state.lastSpinDate === 'string') {
-                    state.lastSpinDate = new Date(state.lastSpinDate);
-                }
+                updateUI();
             }
         }
         
-        // Save game state to localStorage
-        function saveState() {
-            localStorage.setItem('telegramGiftSpinnerState', JSON.stringify(state));
-        }
-        
-        // Update UI elements with current state
-        function updateUI() {
-            starsDisplay.textContent = state.stars;
-            tokensDisplay.textContent = state.tokens;
-            freeSpinsDisplay.textContent = state.freeSpins;
-            
-            // Update inventory displays
-            updateInventoryDisplay();
-        }
-        
-        // Update inventory displays
-        function updateInventoryDisplay() {
-            if (state.inventory.length === 0) {
-                inventoryItems.innerHTML = '<p>No items yet. Spin the wheel to get gifts!</p>';
-                modalInventoryItems.innerHTML = '<p>No gifts yet. Keep spinning!</p>';
-                return;
-            }
-            
-            // Update main inventory display
-            inventoryItems.innerHTML = '';
-            state.inventory.forEach((item, index) => {
-                if (item.claimed) return;
-                
-                const itemElement = document.createElement('div');
-                itemElement.className = 'inventory-item';
-                itemElement.innerHTML = `
-                    <div>${item.type === 'gift' ? '🎁 Gift' : '🪙 ' + item.amount + ' Tokens'}</div>
-                    ${item.type === 'gift' ? '<button class="claim-button" data-index="' + index + '">Claim</button>' : ''}
-                `;
-                inventoryItems.appendChild(itemElement);
-            });
-            
-            if (inventoryItems.children.length === 0) {
-                inventoryItems.innerHTML = '<p>No unclaimed items. Spin again!</p>';
-            }
-            
-            // Update modal inventory display
-            modalInventoryItems.innerHTML = '';
-            state.inventory.forEach((item, index) => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'inventory-item';
-                itemElement.innerHTML = `
-                    <div>${item.type === 'gift' ? '🎁 Gift' : '🪙 ' + item.amount + ' Tokens'} - 
-                    ${item.claimed ? 'Claimed' : 'Unclaimed'}</div>
-                `;
-                modalInventoryItems.appendChild(itemElement);
-            });
-        }
-        
-        // Setup the wheel segments
+        // Set up the wheel segments
         function setupWheel() {
-            wheel.innerHTML = '';
-            const segmentAngle = 360 / prizes.length;
+            const segmentAngle = 360 / config.segments.length;
             
-            prizes.forEach((prize, index) => {
-                const segment = document.createElement('div');
-                segment.style.position = 'absolute';
-                segment.style.width = '50%';
-                segment.style.height = '50%';
-                segment.style.left = '50%';
-                segment.style.top = '0';
-                segment.style.transformOrigin = 'left bottom';
-                segment.style.transform = `rotate(${index * segmentAngle}deg)`;
-                
-                const text = document.createElement('div');
-                text.textContent = prize.text;
-                text.style.position = 'absolute';
-                text.style.transform = 'rotate(90deg) translateX(20px)';
-                text.style.transformOrigin = 'left center';
-                text.style.whiteSpace = 'nowrap';
-                text.style.fontSize = '12px';
-                text.style.fontWeight = 'bold';
-                text.style.color = 'white';
-                text.style.textShadow = '1px 1px 1px black';
-                
-                segment.appendChild(text);
-                wheel.appendChild(segment);
+            // Create conic gradient for the wheel
+            let gradientParts = [];
+            config.segments.forEach((segment, index) => {
+                const start = (index * segmentAngle) / 360 * 100;
+                const end = ((index + 1) * segmentAngle) / 360 * 100;
+                gradientParts.push(`${segment.color} ${start}% ${end}%`);
             });
+            
+            wheel.style.background = `conic-gradient(${gradientParts.join(', ')})`;
+        }
+        
+        // Update UI elements
+        function updateUI() {
+            balanceDisplay.textContent = state.balance;
+            
+            // Update wins list
+            winsList.innerHTML = '';
+            state.wins.slice(0, 10).forEach(win => {
+                const winItem = document.createElement('div');
+                winItem.className = 'win-item';
+                winItem.innerHTML = `
+                    <span class="win-user">${win.user}</span>
+                    <span class="win-amount">${win.amount}</span>
+                `;
+                winsList.appendChild(winItem);
+            });
+            
+            // Enable/disable spin button based on balance
+            spinButtonMain.disabled = state.balance < config.spinCost || state.isSpinning;
         }
         
         // Spin the wheel
         function spinWheel() {
-            if (state.freeSpins <= 0) {
-                alert('No more free spins today! Come back tomorrow.');
-                return;
+            if (state.isSpinning || state.balance < config.spinCost) return;
+            
+            state.isSpinning = true;
+            state.balance -= config.spinCost;
+            updateUI();
+            
+            // Determine the result based on weights
+            const totalWeight = config.segments.reduce((sum, segment) => sum + segment.weight, 0);
+            let random = Math.random() * totalWeight;
+            let selectedSegment;
+            let accumulatedWeight = 0;
+            
+            for (const segment of config.segments) {
+                accumulatedWeight += segment.weight;
+                if (random <= accumulatedWeight) {
+                    selectedSegment = segment;
+                    break;
+                }
             }
-            
-            spinButton.style.pointerEvents = 'none';
-            state.freeSpins--;
-            
-            // Determine prize (1% chance for gift)
-            const random = Math.random();
-            let prizeIndex;
-            
-            if (random < 0.01) {
-                // Gift prize (last segment)
-                prizeIndex = prizes.length - 1;
-            } else {
-                // Random token prize
-                prizeIndex = Math.floor(Math.random() * (prizes.length - 1));
-            }
-            
-            const selectedPrize = prizes[prizeIndex];
-            const segmentAngle = 360 / prizes.length;
             
             // Calculate rotation (5 full rotations + offset to selected segment)
+            const segmentAngle = 360 / config.segments.length;
             const currentRotation = parseInt(wheel.style.transform.replace('rotate(', '').replace('deg)', '')) || 0;
-            const targetRotation = currentRotation + 1800 + (360 - (prizeIndex * segmentAngle + segmentAngle / 2));
+            const segmentIndex = config.segments.findIndex(s => s.label === selectedSegment.label);
+            const targetRotation = currentRotation + 1800 + (360 - (segmentIndex * segmentAngle + segmentAngle / 2));
             
             wheel.style.transform = `rotate(${targetRotation}deg)`;
             
-            // Save last spin date
-            state.lastSpinDate = new Date();
+            // Add to wins list
+            state.wins.unshift({
+                user: `Player${Math.floor(Math.random() * 1000)}`,
+                amount: selectedSegment.label
+            });
             
-            // Add prize to inventory
+            // Show result after spin completes
             setTimeout(() => {
-                const prizeCopy = JSON.parse(JSON.stringify(selectedPrize));
-                prizeCopy.date = new Date();
-                prizeCopy.claimed = false;
-                state.inventory.unshift(prizeCopy);
-                
-                // If it's tokens, multiply them by current multiplier
-                if (selectedPrize.type === 'token') {
-                    state.tokens += selectedPrize.amount * state.multipliers.token;
-                }
-                
-                showResult(selectedPrize);
-                saveState();
+                showResult(selectedSegment);
+                state.isSpinning = false;
                 updateUI();
-                spinButton.style.pointerEvents = 'auto';
+                saveState();
             }, 3000);
         }
         
         // Show result modal
-        function showResult(prize) {
-            if (prize.type === 'gift') {
-                resultIcon.textContent = '🎁';
-                resultIcon.className = 'result-icon gift-result';
-                resultMessage.textContent = 'Congratulations!';
-                prizeAmount.textContent = 'You won a GIFT!';
-            } else {
-                resultIcon.textContent = '🪙';
-                resultIcon.className = 'result-icon token-result';
-                resultMessage.textContent = 'You won!';
-                prizeAmount.textContent = `${prize.amount * state.multipliers.token} Tokens`;
+        function showResult(segment) {
+            resultIcon.textContent = segment.multiplier === 100 ? '💰' : segment.multiplier === 10 ? '🎁' : '🎯';
+            resultText.textContent = segment.multiplier > 0 ? 'ПОЗДРАВЛЯЕМ!' : 'ПОВЕЗЕТ В СЛЕДУЮЩИЙ РАЗ!';
+            resultAmount.textContent = segment.label;
+            
+            if (segment.multiplier > 0) {
+                state.balance += config.spinCost * segment.multiplier;
             }
             
             resultModal.style.display = 'flex';
         }
         
-        // Start the daily reset timer
-        function startTimer() {
-            updateTimer();
-            setInterval(updateTimer, 1000);
-        }
-        
-        // Update the timer display
-        function updateTimer() {
-            const now = new Date();
-            const tomorrow = new Date(now);
-            tomorrow.setDate(tomorrow.getDate() + 1);
-            tomorrow.setHours(0, 0, 0, 0);
-            
-            const diff = tomorrow - now;
-            const hours = Math.floor(diff / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000;
-            
-            timerDisplay.textContent = `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-        }
-        
-        // Check if we need to reset free spins
-        function checkDailyReset() {
-            const now = new Date();
-            
-            if (!state.lastSpinDate) {
-                // First time playing
-                state.freeSpins = 3;
-                saveState();
-                updateUI();
-                return;
-            }
-            
-            const lastSpinDate = new Date(state.lastSpinDate);
-            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-            const lastSpinDay = new Date(lastSpinDate.getFullYear(), lastSpinDate.getMonth(), lastSpinDate.getDate());
-            
-            if (lastSpinDay < today) {
-                // New day, reset spins
-                state.freeSpins = 3;
-                saveState();
-                updateUI();
-            }
-        }
-        
-        // Claim a gift from inventory
-        function claimGift(index) {
-            if (index >= 0 && index < state.inventory.length && state.inventory[index].type === 'gift' && !state.inventory[index].claimed) {
-                state.inventory[index].claimed = true;
-                state.stars += 1; // Give 1 star for each gift
-                saveState();
-                updateUI();
-                
-                // Show claimed notification
-                alert('You claimed a gift and received 1 star!');
-            }
-        }
-        
-        // Buy a multiplier from the shop
-        function buyMultiplier(multiplier, cost) {
-            if (state.stars >= cost) {
-                state.stars -= cost;
-                state.multipliers.token = multiplier;
-                saveState();
-                updateUI();
-                alert(`You bought a ${multiplier}x token multiplier!`);
-            } else {
-                alert('Not enough stars!');
-            }
+        // Save game state
+        function saveState() {
+            localStorage.setItem('htSpinnerState', JSON.stringify(state));
         }
         
         // Event listeners
         spinButton.addEventListener('click', spinWheel);
+        spinButtonMain.addEventListener('click', spinWheel);
         
-        // Close modals
-        document.querySelector('.close-button').addEventListener('click', () => {
-            inventoryModal.style.display = 'none';
+        // Double tap for quick spin
+        let lastTap = 0;
+        spinButton.addEventListener('touchend', function(e) {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTap;
+            if (tapLength < 500 && tapLength > 0) {
+                spinWheel();
+            }
+            lastTap = currentTime;
         });
         
+        // Close result modal
         closeResult.addEventListener('click', () => {
             resultModal.style.display = 'none';
-        });
-        
-        // Close modals when clicking outside
-        window.addEventListener('click', (event) => {
-            if (event.target === inventoryModal) {
-                inventoryModal.style.display = 'none';
-            }
-            if (event.target === resultModal) {
-                resultModal.style.display = 'none';
-            }
-        });
-        
-        // Inventory claim buttons (delegated)
-        inventoryItems.addEventListener('click', (event) => {
-            if (event.target.classList.contains('claim-button')) {
-                const index = parseInt(event.target.getAttribute('data-index'));
-                claimGift(index);
-            }
-        });
-        
-        // Shop items
-        shopItems.forEach(item => {
-            item.addEventListener('click', () => {
-                const multiplier = parseInt(item.getAttribute('data-multiplier'));
-                const cost = parseInt(item.getAttribute('data-cost'));
-                buyMultiplier(multiplier, cost);
-            });
-        });
-        
-        // Tab switching
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                tabs.forEach(t => t.classList.remove('active'));
-                tabContents.forEach(c => c.classList.remove('active'));
-                
-                tab.classList.add('active');
-                document.getElementById(`${tab.getAttribute('data-tab')}-tab`).classList.add('active');
-            });
         });
         
         // Initialize the game
