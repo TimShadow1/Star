@@ -1,662 +1,119 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Gift Roulette</title>
-    <style>
-        :root {
-            --tg-theme-bg-color: #17212b;
-            --tg-theme-text-color: #ffffff;
-            --tg-theme-hint-color: #708499;
-            --tg-theme-link-color: #6ab3f3;
-            --tg-theme-button-color: #5288c1;
-            --tg-theme-button-text-color: #ffffff;
-            --tg-theme-secondary-bg-color: #232e3c;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--tg-theme-bg-color);
-            color: var(--tg-theme-text-color);
-            margin: 0;
-            padding: 0;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        
-        .container {
-            width: 100%;
-            max-width: 375px;
-            padding: 16px;
-            box-sizing: border-box;
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--tg-theme-secondary-bg-color);
-        }
-        
-        .header h1 {
-            font-size: 22px;
-            margin: 0;
-            color: var(--tg-theme-text-color);
-            font-weight: 600;
-        }
-        
-        .header h2 {
-            font-size: 16px;
-            margin: 4px 0 0;
-            color: var(--tg-theme-hint-color);
-            font-weight: 400;
-        }
-        
-        .roulette-container {
-            position: relative;
-            width: 100%;
-            height: 300px;
-            margin: 0 auto 24px;
-            overflow: hidden;
-            border-radius: 16px;
-            background-color: var(--tg-theme-secondary-bg-color);
-        }
-        
-        .roulette-wheel {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            transition: transform 5s cubic-bezier(0.17, 0.67, 0.12, 0.99);
-            transform: translateX(0);
-        }
-        
-        .roulette-segment {
-            min-width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            box-sizing: border-box;
-            text-align: center;
-        }
-        
-        .segment-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-        }
-        
-        .segment-label {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .segment-description {
-            font-size: 14px;
-            color: var(--tg-theme-hint-color);
-        }
-        
-        .roulette-pointer {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 12px solid transparent;
-            border-right: 12px solid transparent;
-            border-top: 24px solid var(--tg-theme-button-color);
-            z-index: 2;
-        }
-        
-        .controls {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 24px;
-        }
-        
-        .balance {
-            display: flex;
-            align-items: center;
-            margin-bottom: 16px;
-            font-size: 16px;
-        }
-        
-        .stars-count {
-            font-weight: 600;
-            margin-left: 4px;
-            color: #FFD700;
-        }
-        
-        .spin-button {
-            background-color: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
-            border: none;
-            border-radius: 10px;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-            max-width: 200px;
-            text-align: center;
-            transition: opacity 0.2s;
-        }
-        
-        .spin-button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .spin-cost {
-            font-size: 14px;
-            color: var(--tg-theme-hint-color);
-            margin-top: 8px;
-            text-align: center;
-        }
-        
-        .double-tap-hint {
-            font-size: 13px;
-            color: var(--tg-theme-hint-color);
-            margin-top: 12px;
-            text-align: center;
-            font-style: italic;
-        }
-        
-        .live-wins {
-            background-color: var(--tg-theme-secondary-bg-color);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-        
-        .live-wins h3 {
-            margin: 0 0 12px;
-            font-size: 16px;
-            font-weight: 500;
-            text-align: center;
-        }
-        
-        .wins-list {
-            max-height: 120px;
-            overflow-y: auto;
-        }
-        
-        .win-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 14px;
-        }
-        
-        .win-item:last-child {
-            border-bottom: none;
-        }
-        
-        .win-user {
-            color: var(--tg-theme-link-color);
-        }
-        
-        .win-prize {
-            font-weight: 500;
-        }
-        
-        .bot-link {
-            font-size: 14px;
-            color: var(--tg-theme-hint-color);
-            text-align: center;
-            margin-top: 16px;
-        }
-        
-        .result-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 100;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .result-content {
-            background-color: var(--tg-theme-bg-color);
-            border-radius: 16px;
-            padding: 24px;
-            width: 80%;
-            max-width: 300px;
-            text-align: center;
-            border: 1px solid var(--tg-theme-secondary-bg-color);
-        }
-        
-        .result-icon {
-            font-size: 64px;
-            margin-bottom: 16px;
-        }
-        
-        .result-title {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        
-        .result-prize {
-            font-size: 18px;
-            margin-bottom: 16px;
-            color: var(--tg-theme-link-color);
-        }
-        
-        .result-button {
-            background-color: var(--tg-theme-button-color);
-            color: var(--tg-theme-button-text-color);
-            border: none;
-            border-radius: 10px;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-        }
-        
-        .inventory-button {
-            background-color: var(--tg-theme-secondary-bg-color);
-            color: var(--tg-theme-text-color);
-            border: none;
-            border-radius: 10px;
-            padding: 12px 24px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            width: 100%;
-            margin-top: 12px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Telegram Gift Spinner</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(180deg, #bf2cff, #ff8cf0);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      height: 100vh;
+      color: white;
+    }
+
+    .header {
+      margin-top: 20px;
+      font-size: 32px;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    .wheel {
+      margin: 40px auto;
+      width: 150px;
+      height: 150px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+      color: black;
+      font-size: 24px;
+    }
+
+    .chances {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px;
+    }
+
+    .chances button {
+      background: rgba(255,255,255,0.2);
+      border: 2px solid white;
+      border-radius: 20px;
+      color: white;
+      padding: 5px 15px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .spin-btn {
+      background: white;
+      color: #ff00cc;
+      padding: 15px 30px;
+      border: none;
+      border-radius: 40px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    .footer {
+      text-align: center;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Пара</h1>
-            <h2>3-day</h2>
-        </div>
-        
-        <div class="roulette-container">
-            <div class="roulette-pointer"></div>
-            <div class="roulette-wheel" id="roulette-wheel">
-                <div class="roulette-segment" style="background-color: #e74c3c;">
-                    <div class="segment-icon">🎁</div>
-                    <div class="segment-label">Telegram Premium</div>
-                    <div class="segment-description">1 month subscription</div>
-                </div>
-                <div class="roulette-segment" style="background-color: #3498db;">
-                    <div class="segment-icon">🖼️</div>
-                    <div class="segment-label">NFT Collectible</div>
-                    <div class="segment-description">Exclusive Telegram NFT</div>
-                </div>
-                <div class="roulette-segment" style="background-color: #2ecc71;">
-                    <div class="segment-icon">⭐</div>
-                    <div class="segment-label">100 Stars</div>
-                    <div class="segment-description">For Telegram gifts</div>
-                </div>
-                <div class="roulette-segment" style="background-color: #f39c12;">
-                    <div class="segment-icon">🎨</div>
-                    <div class="segment-label">Custom Emoji Pack</div>
-                    <div class="segment-description">For your chats</div>
-                </div>
-                <div class="roulette-segment" style="background-color: #9b59b6;">
-                    <div class="segment-icon">🤖</div>
-                    <div class="segment-label">Premium Bot</div>
-                    <div class="segment-description">1 year subscription</div>
-                </div>
-                <div class="roulette-segment" style="background-color: #1abc9c;">
-                    <div class="segment-icon">💎</div>
-                    <div class="segment-label">VIP Status</div>
-                    <div class="segment-description">Special badge in chats</div>
-                </div>
-                <div class="roulette-segment" style="background-color: #e67e22;">
-                    <div class="segment-icon">📱</div>
-                    <div class="segment-label">Custom Theme</div>
-                    <div class="segment-description">Personalized UI</div>
-                </div>
-                <div class="roulette-segment" style="background-color: #34495e;">
-                    <div class="segment-icon">🔄</div>
-                    <div class="segment-label">Spin Again</div>
-                    <div class="segment-description">Try your luck one more time</div>
-                </div>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <div class="balance">
-                Your stars: <span class="stars-count" id="stars-count">0</span> ⭐
-            </div>
-            <button class="spin-button" id="spin-button">SPIN FOR 200 STARS</button>
-            <div class="spin-cost">1 free spin available</div>
-            <div class="double-tap-hint">двойной тап для быстрого кручения</div>
-        </div>
-        
-        <button class="inventory-button" id="inventory-button">MY GIFTS</button>
-        
-        <div class="live-wins">
-            <h3>ВЫИГРЫШИ В ПРЯМОМ ЭФИРЕ</h3>
-            <div class="wins-list" id="wins-list">
-                <div class="win-item">
-                    <span class="win-user">@user123</span>
-                    <span class="win-prize">Telegram Premium</span>
-                </div>
-                <div class="win-item">
-                    <span class="win-user">@nftcollector</span>
-                    <span class="win-prize">NFT Collectible</span>
-                </div>
-                <div class="win-item">
-                    <span class="win-user">@luckydraw</span>
-                    <span class="win-prize">100 Stars</span>
-                </div>
-            </div>
-        </div>
-        
-        <div class="bot-link">@virus_play_bot</div>
-    </div>
-    
-    <div class="result-modal" id="result-modal">
-        <div class="result-content">
-            <div class="result-icon" id="result-icon">🎁</div>
-            <div class="result-title" id="result-title">ПОЗДРАВЛЯЕМ!</div>
-            <div class="result-prize" id="result-prize">Telegram Premium</div>
-            <button class="result-button" id="result-button">CLAIM GIFT</button>
-        </div>
-    </div>
-    
-    <script>
-        // Game configuration
-        const config = {
-            spinCost: 200,
-            freeSpins: 1,
-            segments: [
-                { 
-                    type: "premium",
-                    label: "Telegram Premium",
-                    icon: "🎁",
-                    description: "1 month subscription",
-                    color: "#e74c3c",
-                    weight: 10
-                },
-                { 
-                    type: "nft",
-                    label: "NFT Collectible",
-                    icon: "🖼️",
-                    description: "Exclusive Telegram NFT",
-                    color: "#3498db",
-                    weight: 5
-                },
-                { 
-                    type: "stars",
-                    label: "100 Stars",
-                    icon: "⭐",
-                    description: "For Telegram gifts",
-                    color: "#2ecc71",
-                    weight: 20
-                },
-                { 
-                    type: "emoji",
-                    label: "Custom Emoji Pack",
-                    icon: "🎨",
-                    description: "For your chats",
-                    color: "#f39c12",
-                    weight: 15
-                },
-                { 
-                    type: "bot",
-                    label: "Premium Bot",
-                    icon: "🤖",
-                    description: "1 year subscription",
-                    color: "#9b59b6",
-                    weight: 10
-                },
-                { 
-                    type: "vip",
-                    label: "VIP Status",
-                    icon: "💎",
-                    description: "Special badge in chats",
-                    color: "#1abc9c",
-                    weight: 5
-                },
-                { 
-                    type: "theme",
-                    label: "Custom Theme",
-                    icon: "📱",
-                    description: "Personalized UI",
-                    color: "#e67e22",
-                    weight: 15
-                },
-                { 
-                    type: "again",
-                    label: "Spin Again",
-                    icon: "🔄",
-                    description: "Try your luck one more time",
-                    color: "#34495e",
-                    weight: 20
-                }
-            ]
-        };
-        
-        // Game state
-        const state = {
-            stars: 0,
-            freeSpins: config.freeSpins,
-            isSpinning: false,
-            inventory: [],
-            wins: [
-                { user: "@user123", prize: "Telegram Premium" },
-                { user: "@nftcollector", prize: "NFT Collectible" },
-                { user: "@luckydraw", prize: "100 Stars" }
-            ]
-        };
-        
-        // DOM elements
-        const rouletteWheel = document.getElementById('roulette-wheel');
-        const spinButton = document.getElementById('spin-button');
-        const starsCount = document.getElementById('stars-count');
-        const winsList = document.getElementById('wins-list');
-        const inventoryButton = document.getElementById('inventory-button');
-        const resultModal = document.getElementById('result-modal');
-        const resultIcon = document.getElementById('result-icon');
-        const resultTitle = document.getElementById('result-title');
-        const resultPrize = document.getElementById('result-prize');
-        const resultButton = document.getElementById('result-button');
-        
-        // Initialize the game
-        function initGame() {
-            updateUI();
-            
-            // Initialize Telegram WebApp if running in Telegram
-            if (window.Telegram && window.Telegram.WebApp) {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();
-                
-                // Get user's stars balance from Telegram
-                // This would normally come from Telegram's backend
-                state.stars = 0; // Start with 0 stars
-                updateUI();
-            }
-        }
-        
-        // Update UI elements
-        function updateUI() {
-            starsCount.textContent = state.stars;
-            
-            // Update spin button state
-            if (state.freeSpins > 0) {
-                spinButton.textContent = "FREE SPIN";
-                spinButton.disabled = state.isSpinning;
-            } else if (state.stars >= config.spinCost) {
-                spinButton.textContent = `SPIN FOR ${config.spinCost} STARS`;
-                spinButton.disabled = state.isSpinning;
-            } else {
-                spinButton.textContent = "NEED MORE STARS";
-                spinButton.disabled = true;
-            }
-            
-            // Update wins list
-            winsList.innerHTML = '';
-            state.wins.slice(0, 10).forEach(win => {
-                const winItem = document.createElement('div');
-                winItem.className = 'win-item';
-                winItem.innerHTML = `
-                    <span class="win-user">${win.user}</span>
-                    <span class="win-prize">${win.prize}</span>
-                `;
-                winsList.appendChild(winItem);
-            });
-        }
-        
-        // Spin the roulette
-        function spinRoulette() {
-            if (state.isSpinning) return;
-            
-            // Check if user can spin
-            if (state.freeSpins <= 0 && state.stars < config.spinCost) {
-                alert("You don't have enough stars to spin!");
-                return;
-            }
-            
-            state.isSpinning = true;
-            
-            // Deduct stars or use free spin
-            if (state.freeSpins > 0) {
-                state.freeSpins--;
-            } else {
-                state.stars -= config.spinCost;
-            }
-            
-            updateUI();
-            
-            // Determine the result based on weights
-            const totalWeight = config.segments.reduce((sum, segment) => sum + segment.weight, 0);
-            let random = Math.random() * totalWeight;
-            let selectedSegment;
-            let accumulatedWeight = 0;
-            
-            for (const segment of config.segments) {
-                accumulatedWeight += segment.weight;
-                if (random <= accumulatedWeight) {
-                    selectedSegment = segment;
-                    break;
-                }
-            }
-            
-            // Calculate the target position (5 full rotations + segment offset)
-            const segmentWidth = 100 / config.segments.length;
-            const segmentIndex = config.segments.findIndex(s => s.label === selectedSegment.label);
-            const targetPosition = -(segmentIndex * segmentWidth) - (5 * 100);
-            
-            // Apply the spin animation
-            rouletteWheel.style.transform = `translateX(${targetPosition}%)`;
-            
-            // Show result after spin completes
-            setTimeout(() => {
-                handleResult(selectedSegment);
-                state.isSpinning = false;
-                updateUI();
-            }, 5000);
-        }
-        
-        // Handle the spin result
-        function handleResult(segment) {
-            // Add to inventory if not "Spin Again"
-            if (segment.type !== "again") {
-                state.inventory.push({
-                    type: segment.type,
-                    label: segment.label,
-                    date: new Date(),
-                    claimed: false
-                });
-            }
-            
-            // Add to wins list
-            const randomUser = `@user${Math.floor(1000 + Math.random() * 9000)}`;
-            state.wins.unshift({
-                user: randomUser,
-                prize: segment.label
-            });
-            
-            // Special cases
-            if (segment.type === "stars") {
-                state.stars += 100;
-            } else if (segment.type === "again") {
-                state.freeSpins += 1;
-            }
-            
-            // Show result modal
-            showResult(segment);
-        }
-        
-        // Show result modal
-        function showResult(segment) {
-            resultIcon.textContent = segment.icon;
-            resultTitle.textContent = segment.type === "again" ? "TRY AGAIN!" : "ПОЗДРАВЛЯЕМ!";
-            resultPrize.textContent = segment.label;
-            
-            if (segment.type === "again") {
-                resultButton.textContent = "SPIN AGAIN";
-            } else {
-                resultButton.textContent = "CLAIM GIFT";
-            }
-            
-            resultModal.style.display = "flex";
-        }
-        
-        // Claim gift
-        function claimGift() {
-            // In a real implementation, this would connect to Telegram's backend
-            // to actually deliver the gift to the user's account
-            alert("Your gift has been claimed and will be delivered to your Telegram account!");
-            resultModal.style.display = "none";
-        }
-        
-        // Show inventory
-        function showInventory() {
-            if (state.inventory.length === 0) {
-                alert("You haven't won any gifts yet. Try your luck!");
-                return;
-            }
-            
-            let inventoryText = "Your gifts:\n\n";
-            state.inventory.forEach(item => {
-                inventoryText += `🎁 ${item.label}\n`;
-                inventoryText += `Won on: ${item.date.toLocaleDateString()}\n`;
-                inventoryText += `Status: ${item.claimed ? "Claimed" : "Ready to claim"}\n\n`;
-            });
-            
-            alert(inventoryText);
-        }
-        
-        // Event listeners
-        spinButton.addEventListener("click", spinRoulette);
-        inventoryButton.addEventListener("click", showInventory);
-        resultButton.addEventListener("click", claimGift);
-        
-        // Double tap for quick spin (mobile)
-        let lastTap = 0;
-        spinButton.addEventListener("touchend", function(e) {
-            const currentTime = new Date().getTime();
-            const tapLength = currentTime - lastTap;
-            if (tapLength < 500 && tapLength > 0) {
-                spinRoulette();
-            }
-            lastTap = currentTime;
-        });
-        
-        // Initialize the game
-        initGame();
-    </script>
+  <div class="header">
+    🎉 Happy B-day 🎉
+  </div>
+
+  <div class="wheel" id="wheel">
+    🎁
+  </div>
+
+  <div class="chances">
+    <button onclick="setChance(1)">1X ШАНС</button>
+    <button onclick="setChance(10)">10X</button>
+    <button onclick="setChance(100)">100X</button>
+  </div>
+
+  <button class="spin-btn" onclick="spin()">
+    РАСКРУТИТЬ ЗА <span id="cost">200</span>⭐
+  </button>
+
+  <div class="footer">
+    🧸 Выигрыши в ПРЯМОМ ЭФИРЕ<br>@virus_play_bot
+  </div>
+
+  <script>
+    let chance = 1;
+    const wheel = document.getElementById('wheel');
+    const costDisplay = document.getElementById('cost');
+
+    function setChance(mult) {
+      chance = mult;
+      costDisplay.innerText = 200 * mult;
+    }
+
+    function spin() {
+      wheel.innerText = '🔄';
+      setTimeout(() => {
+        const prize = Math.random() < 0.01 ? '🎁 NFT!' : '🎮 Игровой токен';
+        wheel.innerText = prize;
+      }, 2000);
+    }
+  </script>
 </body>
 </html>
