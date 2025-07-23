@@ -1,154 +1,72 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Telegram Gift Shop</title>
-    <style>
-        :root {
-            --primary: #0088cc;
-            --secondary: #f5f5f5;
-            --accent: #ff6b00;
-            --text: #333333;
-            --bg: #ffffff;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            padding: 0;
-            margin: 0;
-        }
-        
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        h1 {
-            color: var(--primary);
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .gift-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-        }
-        
-        .gift-card {
-            background-color: var(--secondary);
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-        }
-        
-        .gift-card:hover {
-            transform: translateY(-5px);
-        }
-        
-        .gift-title {
-            font-size: 1.4rem;
-            color: var(--primary);
-            margin: 0 0 10px;
-        }
-        
-        .gift-description {
-            margin-bottom: 15px;
-            color: var(--text);
-        }
-        
-        .gift-price {
-            font-weight: bold;
-            color: var(--accent);
-            font-size: 1.2rem;
-            margin: 10px 0;
-        }
-        
-        .gift-meta {
-            font-size: 0.9rem;
-            color: #666;
-        }
-        
-        .divider {
-            height: 1px;
-            background-color: #eee;
-            margin: 30px 0;
-        }
-        
-        .section-title {
-            color: var(--primary);
-            margin-bottom: 15px;
-        }
-        
-        .color-palette {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        .color-box {
-            width: 50px;
-            height: 50px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Telegram Gift Shop</h1>
-        
-        <div class="gift-grid">
-            <!-- Confetti Celebration -->
-            <div class="gift-card">
-                <h2 class="gift-title">Confetti Celebration</h2>
-                <p class="gift-description">Colorful animated confetti</p>
-                <div class="gift-price">50 ⭐</div>
-                <div class="gift-meta">80% GPT1</div>
-            </div>
-            
-            <!-- Shooting Stars -->
-            <div class="gift-card">
-                <h2 class="gift-title">Shooting Stars</h2>
-                <p class="gift-description">Beautiful starry night effect</p>
-                <div class="gift-price">50 ⭐</div>
-                <div class="gift-meta">80% GPT1</div>
-            </div>
-            
-            <!-- Floating Balloon -->
-            <div class="gift-card">
-                <h2 class="gift-title">Floating Balloon</h2>
-                <p class="gift-description">Cute animated balloon</p>
-                <div class="gift-price">40 ⭐</div>
-                <div class="gift-meta">80% GPT1</div>
-            </div>
-            
-            <!-- Sweet Candy -->
-            <div class="gift-card">
-                <h2 class="gift-title">Sweet Candy</h2>
-                <p class="gift-description">Delicious looking candy</p>
-                <div class="gift-price">30 ⭐</div>
-            </div>
-        </div>
-        
-        <div class="divider"></div>
-        
-        <h2 class="section-title">Coloring</h2>
-        <div class="color-palette">
-            <div class="color-box" style="background-color: #0088cc;">Stars</div>
-            <div class="color-box" style="background-color: #ff6b00;">Balloon</div>
-            <div class="color-box" style="background-color: #ffcc00;">Candy</div>
-        </div>
-    </div>
-</body>
-</html>
+// Storage system
+let userData = {
+  stars: 0,
+  energy: 100,
+  isPremium: false,
+  premiumExpiry: null,
+  lastClickTime: 0
+};
+
+// Energy system (10 energy per hour regeneration)
+function updateEnergy() {
+  if (userData.isPremium) {
+    userData.energy = Infinity;
+    return;
+  }
+  
+  const now = Date.now();
+  const hoursPassed = (now - userData.lastClickTime) / (1000 * 60 * 60);
+  userData.energy = Math.min(100, userData.energy + Math.floor(hoursPassed * 10));
+  userData.lastClickTime = now;
+}
+
+// Click handler
+function handleClick() {
+  updateEnergy();
+  
+  if (userData.energy <= 0 && !userData.isPremium) {
+    showEnergyWarning();
+    return;
+  }
+  
+  // Deduct energy (if not premium)
+  if (!userData.isPremium) {
+    userData.energy -= 1;
+  }
+  
+  // Add random stars (1-5)
+  const starsEarned = Math.floor(Math.random() * 5) + 1;
+  userData.stars += starsEarned;
+  
+  // Play cosmic animation
+  playStarAnimation(starsEarned);
+  
+  // Update UI
+  updateStarCounter();
+  updateEnergyDisplay();
+}
+
+// Withdraw handler (always fake)
+function handleWithdraw(giftId) {
+  showModal("Your withdrawal is under moderation. Please wait...");
+  
+  // Premium users get a slightly different message
+  if (userData.isPremium) {
+    showModal("Priority withdrawal processing... (still takes time)");
+  }
+}
+
+// Premium purchase
+function purchasePremium(type) {
+  if (type === 'daily') {
+    // This would actually use Telegram's payment system for real stars
+    Telegram.WebApp.openInvoice({...}, (status) => {
+      if (status === 'paid') {
+        userData.isPremium = true;
+        userData.premiumExpiry = Date.now() + (24 * 60 * 60 * 1000);
+        updateUIForPremium();
+      }
+    });
+  }
+  // Similar for lifetime
+}
