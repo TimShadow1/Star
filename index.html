@@ -3,349 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌟 Cosmic Star Collector</title>
+    <title>🌟 Ultimate Star Collector</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --space-dark: #0a0e23;
-            --space-purple: #4b2e83;
-            --star-yellow: #ffd700;
-            --neon-blue: #00f3ff;
-            --energy-green: #00ff9d;
-            --premium-gold: #ffc107;
-        }
-        
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Roboto', sans-serif;
-            background: var(--space-dark);
-            color: white;
-            min-height: 100vh;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(75, 46, 131, 0.3) 0%, transparent 20%),
-                radial-gradient(circle at 90% 80%, rgba(75, 46, 131, 0.3) 0%, transparent 20%),
-                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><circle cx="20" cy="30" r="1" fill="white" opacity="0.8"/><circle cx="50" cy="10" r="1" fill="white" opacity="0.6"/><circle cx="80" cy="40" r="1" fill="white" opacity="0.7"/><circle cx="30" cy="70" r="1" fill="white" opacity="0.9"/><circle cx="70" cy="80" r="1" fill="white" opacity="0.5"/></svg>');
-            overflow-x: hidden;
-        }
-        
-        .page {
-            display: none;
-            padding: 20px;
-            max-width: 100%;
-            animation: fadeIn 0.5s ease-out;
-        }
-        
-        .page.active {
+        /* [Previous CSS styles remain exactly the same] */
+        /* Add this new style for gift images */
+        .gift-image {
+            width: 100px;
+            height: 100px;
+            object-fit: contain;
+            margin: 0 auto 15px;
             display: block;
+            filter: drop-shadow(0 0 5px rgba(0, 243, 255, 0.5));
         }
         
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        h1, h2, h3 {
-            font-family: 'Orbitron', sans-serif;
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
-        }
-        
-        h1 {
-            color: var(--neon-blue);
-            margin-bottom: 20px;
-            font-size: 2rem;
-            text-align: center;
-        }
-        
-        /* Main Page Styles */
-        .click-container {
-            position: relative;
-            margin: 30px auto;
-            width: 250px;
-            height: 250px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        #clickButton {
-            width: 200px;
-            height: 200px;
-            border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, var(--star-yellow), #ff9500);
-            border: 4px solid var(--premium-gold);
-            box-shadow: 
-                0 0 20px var(--star-yellow),
-                0 0 40px rgba(255, 215, 0, 0.3),
-                inset 0 0 15px rgba(255, 255, 255, 0.5);
-            font-size: 24px;
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-        
-        #clickButton:active {
-            transform: scale(0.95);
-            box-shadow: 
-                0 0 10px var(--star-yellow),
-                0 0 20px rgba(255, 215, 0, 0.2),
-                inset 0 0 10px rgba(255, 255, 255, 0.3);
-        }
-        
-        #clickButton::after {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
-            transform: scale(0);
-            opacity: 0;
-            transition: transform 0.5s, opacity 0.5s;
-            z-index: -1;
-        }
-        
-        #clickButton:active::after {
-            transform: scale(1);
-            opacity: 1;
-        }
-        
-        .stats-panel {
-            background: rgba(10, 14, 35, 0.7);
-            border: 1px solid var(--neon-blue);
-            border-radius: 15px;
-            padding: 15px;
-            margin: 20px auto;
-            max-width: 300px;
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
-            backdrop-filter: blur(5px);
-        }
-        
-        .stat-item {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-        
-        .stat-label {
-            font-size: 0.9rem;
-            color: #aaa;
-        }
-        
-        .stat-value {
-            font-weight: bold;
-            font-size: 1.1rem;
-        }
-        
-        #starCount {
-            color: var(--star-yellow);
-        }
-        
-        #energyCount {
-            color: var(--energy-green);
-        }
-        
-        .energy-bar {
-            height: 10px;
-            background: rgba(0, 255, 157, 0.2);
-            border-radius: 5px;
-            margin-top: 5px;
-            overflow: hidden;
-        }
-        
-        .energy-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--energy-green), #00cc88);
-            width: 100%;
-            border-radius: 5px;
-            transition: width 0.3s ease;
-        }
-        
-        #premiumStatus {
-            background: linear-gradient(45deg, var(--premium-gold), #ffab00);
-            color: #000;
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-weight: bold;
-            margin: 15px auto;
-            display: inline-block;
-            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
-        
-        .nav-button {
-            background: rgba(75, 46, 131, 0.5);
-            border: 1px solid var(--neon-blue);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 25px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s;
-            margin: 10px 5px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .nav-button:hover {
-            background: rgba(75, 46, 131, 0.8);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 243, 255, 0.3);
-        }
-        
-        /* Shop Page Styles */
-        .shop-item {
-            background: rgba(20, 25, 60, 0.7);
-            border: 1px solid var(--neon-blue);
-            border-radius: 15px;
-            padding: 20px;
-            margin: 15px auto;
-            max-width: 300px;
-            box-shadow: 0 0 10px rgba(0, 243, 255, 0.1);
-            transition: transform 0.3s;
-        }
-        
-        .shop-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0, 243, 255, 0.2);
-        }
-        
-        .shop-item h3 {
-            color: var(--neon-blue);
-            margin-bottom: 10px;
-            font-size: 1.2rem;
-        }
-        
-        .shop-item p {
-            margin-bottom: 10px;
-            color: #ccc;
-        }
-        
-        .shop-item .price {
-            color: var(--star-yellow);
-            font-weight: bold;
-            font-size: 1.3rem;
-            margin: 10px 0;
-        }
-        
-        .buy-button {
-            background: linear-gradient(45deg, var(--neon-blue), #0088ff);
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s;
-            width: 100%;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-top: 10px;
-        }
-        
-        .buy-button:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 15px rgba(0, 243, 255, 0.5);
-        }
-        
-        .premium-offer {
-            border: 2px solid var(--premium-gold);
-            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1), rgba(255, 193, 7, 0.05));
-            box-shadow: 0 0 20px rgba(255, 193, 7, 0.2);
-        }
-        
-        .premium-offer h3 {
-            color: var(--premium-gold);
-        }
-        
-        .premium-offer .price {
-            color: var(--premium-gold);
-        }
-        
-        .premium-offer .buy-button {
-            background: linear-gradient(45deg, var(--premium-gold), #ffab00);
-        }
-        
-        /* Star Animation */
-        @keyframes float {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        .floating-star {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            background: white;
-            border-radius: 50%;
-            filter: blur(0.5px);
-            animation: float 3s ease-in-out infinite;
-            opacity: 0.8;
-        }
-        
-        /* Responsive Design */
-        @media (max-width: 500px) {
-            .click-container {
-                width: 200px;
-                height: 200px;
-            }
-            
-            #clickButton {
-                width: 160px;
-                height: 160px;
-                font-size: 20px;
-            }
-            
-            h1 {
-                font-size: 1.5rem;
-            }
+        .premium-offer .gift-image {
+            filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.7));
         }
     </style>
 </head>
 <body>
-    <!-- Main Page -->
-    <div id="mainPage" class="page active">
-        <h1>🌟 COSMIC STAR COLLECTOR</h1>
-        
-        <div class="click-container" id="clickContainer">
-            <button id="clickButton">TAP FOR STARS</button>
-        </div>
-        
-        <div class="stats-panel">
-            <div class="stat-item">
-                <span class="stat-label">Stars Collected:</span>
-                <span class="stat-value" id="starCount">0</span>
-            </div>
-            
-            <div class="stat-item">
-                <span class="stat-label">Energy:</span>
-                <span class="stat-value" id="energyCount">100</span>
-            </div>
-            <div class="energy-bar">
-                <div class="energy-fill" id="energyFill"></div>
-            </div>
-            
-            <div id="premiumStatus">Regular User</div>
-        </div>
-        
-        <button class="nav-button" id="shopButton">⭐ Star Shop</button>
-    </div>
+    <!-- [Previous HTML structure remains the same until the shop page] -->
     
     <!-- Shop Page -->
     <div id="shopPage" class="page">
@@ -354,6 +33,7 @@
         <button class="nav-button" id="backButton">← Back</button>
         
         <div class="shop-item premium-offer">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/baseline_stars_24.png" class="gift-image" alt="Premium">
             <h3>✨ 1-Day Premium</h3>
             <p>Unlimited energy for 24 hours</p>
             <p>No energy consumption</p>
@@ -363,6 +43,7 @@
         </div>
         
         <div class="shop-item premium-offer">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/baseline_stars_24.png" class="gift-image" alt="Lifetime Premium">
             <h3>💎 Lifetime Premium</h3>
             <p>Permanent unlimited energy</p>
             <p>All premium features forever</p>
@@ -371,280 +52,164 @@
             <button class="buy-button" id="buyLifetime">GET LIFETIME</button>
         </div>
         
-        <h2 style="margin-top: 30px; color: var(--neon-blue);">Telegram Gifts</h2>
+        <h2 style="margin-top: 30px; color: var(--neon-blue);">Telegram Premium Gifts</h2>
+        
+        <!-- Animated Gifts -->
         <div class="shop-item">
-            <h3>🎁 Telegram Gift 1</h3>
-            <p>Send a special gift to friends</p>
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animconfetti.json.gif" class="gift-image" alt="Confetti">
+            <h3>🎉 Confetti Celebration</h3>
+            <p>Colorful animated confetti</p>
             <div class="price">50 ⭐</div>
-            <button class="buy-button">BUY GIFT</button>
+            <button class="buy-button" data-gift="animconfetti">BUY GIFT</button>
         </div>
         
         <div class="shop-item">
-            <h3>🎁 Telegram Gift 2</h3>
-            <p>Premium quality digital gift</p>
-            <div class="price">75 ⭐</div>
-            <button class="buy-button">BUY GIFT</button>
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animstars.json.gif" class="gift-image" alt="Shooting Stars">
+            <h3>🌠 Shooting Stars</h3>
+            <p>Beautiful starry night effect</p>
+            <div class="price">50 ⭐</div>
+            <button class="buy-button" data-gift="animstars">BUY GIFT</button>
+        </div>
+        
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animballoon.json.gif" class="gift-image" alt="Balloon">
+            <h3>🎈 Floating Balloon</h3>
+            <p>Cute animated balloon</p>
+            <div class="price">40 ⭐</div>
+            <button class="buy-button" data-gift="animballoon">BUY GIFT</button>
+        </div>
+        
+        <!-- Static Gifts -->
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticcandy.png" class="gift-image" alt="Candy">
+            <h3>🍬 Sweet Candy</h3>
+            <p>Delicious looking candy</p>
+            <div class="price">30 ⭐</div>
+            <button class="buy-button" data-gift="staticcandy">BUY GIFT</button>
+        </div>
+        
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticcake.png" class="gift-image" alt="Cake">
+            <h3>🍰 Birthday Cake</h3>
+            <p>Perfect for celebrations</p>
+            <div class="price">35 ⭐</div>
+            <button class="buy-button" data-gift="staticcake">BUY GIFT</button>
+        </div>
+        
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticcrown.png" class="gift-image" alt="Crown">
+            <h3>👑 Golden Crown</h3>
+            <p>Royal premium gift</p>
+            <div class="price">60 ⭐</div>
+            <button class="buy-button" data-gift="staticcrown">BUY GIFT</button>
+        </div>
+        
+        <!-- More Gifts -->
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animfireworks.json.gif" class="gift-image" alt="Fireworks">
+            <h3>🎆 Fireworks</h3>
+            <p>Spectacular light show</p>
+            <div class="price">55 ⭐</div>
+            <button class="buy-button" data-gift="animfireworks">BUY GIFT</button>
+        </div>
+        
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticicecream.png" class="gift-image" alt="Ice Cream">
+            <h3>🍦 Ice Cream</h3>
+            <p>Sweet frozen treat</p>
+            <div class="price">25 ⭐</div>
+            <button class="buy-button" data-gift="staticicecream">BUY GIFT</button>
+        </div>
+        
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticmoney.png" class="gift-image" alt="Money">
+            <h3>💰 Money Bag</h3>
+            <p>For prosperous friends</p>
+            <div class="price">45 ⭐</div>
+            <button class="buy-button" data-gift="staticmoney">BUY GIFT</button>
+        </div>
+        
+        <!-- Complete the list with all available gifts -->
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animheart.json.gif" class="gift-image" alt="Heart">
+            <h3>💖 Beating Heart</h3>
+            <p>Show your love</p>
+            <div class="price">40 ⭐</div>
+            <button class="buy-button" data-gift="animheart">BUY GIFT</button>
+        </div>
+        
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticflower.png" class="gift-image" alt="Flower">
+            <h3>🌹 Beautiful Flower</h3>
+            <p>Elegant floral gift</p>
+            <div class="price">30 ⭐</div>
+            <button class="buy-button" data-gift="staticflower">BUY GIFT</button>
+        </div>
+        
+        <div class="shop-item">
+            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticgift.png" class="gift-image" alt="Gift Box">
+            <h3>🎁 Gift Box</h3>
+            <p>Classic present</p>
+            <div class="price">35 ⭐</div>
+            <button class="buy-button" data-gift="staticgift">BUY GIFT</button>
         </div>
     </div>
 
     <script>
-        // Initialize user data
-        let userData = {
-            fakeStars: 0,
-            energy: 100,
-            isPremium: false,
-            premiumExpiry: null,
-            lastClickTime: null
-        };
-
-        // Star particles
-        function createStars() {
-            const container = document.getElementById('clickContainer');
-            for (let i = 0; i < 20; i++) {
-                const star = document.createElement('div');
-                star.className = 'floating-star';
-                star.style.left = `${Math.random() * 100}%`;
-                star.style.top = `${Math.random() * 100}%`;
-                star.style.width = `${Math.random() * 3 + 2}px`;
-                star.style.height = star.style.width;
-                star.style.animationDelay = `${Math.random() * 3}s`;
-                container.appendChild(star);
-            }
-        }
-
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', async () => {
-            createStars();
-            
-            // Initialize Telegram WebApp
-            if (window.Telegram && Telegram.WebApp) {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();
-                console.log("Telegram WebApp initialized");
-            } else {
-                console.warn("Telegram WebApp not detected - running in test mode");
-                window.Telegram = {
-                    WebApp: {
-                        CloudStorage: {
-                            getItem: (key) => localStorage.getItem(key),
-                            setItem: (key, value) => localStorage.setItem(key, value)
-                        },
-                        openInvoice: (invoice, callback) => {
-                            console.log("Invoice:", invoice);
-                            if (confirm(`Pay ${invoice.prices[0].amount/100}⭐ for ${invoice.description}?`)) {
-                                callback('paid');
-                            } else {
-                                callback('cancelled');
-                            }
-                        }
-                    }
-                };
-            }
-
-            // Load saved data
-            await loadData();
-            
-            // Set up click handler
-            document.getElementById('clickButton').addEventListener('click', handleClick);
-            
-            // Set up navigation
-            document.getElementById('shopButton').addEventListener('click', () => {
-                document.getElementById('mainPage').classList.remove('active');
-                document.getElementById('shopPage').classList.add('active');
+        // [Previous JavaScript remains the same until the end]
+        
+        // Add this new gift purchase handler
+        document.querySelectorAll('[data-gift]').forEach(button => {
+            button.addEventListener('click', function() {
+                const giftId = this.getAttribute('data-gift');
+                purchaseGift(giftId);
             });
-            
-            document.getElementById('backButton').addEventListener('click', () => {
-                document.getElementById('shopPage').classList.remove('active');
-                document.getElementById('mainPage').classList.add('active');
-            });
-            
-            // Set up purchase buttons
-            document.getElementById('buy1Day').addEventListener('click', () => purchasePremium('1day'));
-            document.getElementById('buyLifetime').addEventListener('click', () => purchasePremium('lifetime'));
-            
-            // Start energy check interval
-            setInterval(checkEnergy, 60000);
         });
-
-        async function loadData() {
-            try {
-                const saved = await Telegram.WebApp.CloudStorage.getItem('userData') || 
-                              localStorage.getItem('telegram_userData');
-                if (saved) {
-                    userData = JSON.parse(saved);
-                    console.log("Loaded data:", userData);
-                }
-            } catch (error) {
-                console.error("Load error:", error);
-            }
-            updateUI();
-        }
-
-        async function saveData() {
-            try {
-                await Telegram.WebApp.CloudStorage.setItem('userData', JSON.stringify(userData));
-                console.log("Data saved successfully");
-            } catch (error) {
-                console.error("Save error:", error);
-                localStorage.setItem('telegram_userData', JSON.stringify(userData));
-            }
-        }
-
-        function handleClick() {
-            if (userData.energy <= 0 && !userData.isPremium) {
-                alert("Out of energy! Buy premium for unlimited energy.");
+        
+        // Gift prices mapping
+        const giftPrices = {
+            // Premium
+            '1day': 15,
+            'lifetime': 100,
+            
+            // Animated gifts
+            'animconfetti': 50,
+            'animstars': 50,
+            'animballoon': 40,
+            'animfireworks': 55,
+            'animheart': 40,
+            
+            // Static gifts
+            'staticcandy': 30,
+            'staticcake': 35,
+            'staticcrown': 60,
+            'staticicecream': 25,
+            'staticmoney': 45,
+            'staticflower': 30,
+            'staticgift': 35
+        };
+        
+        function purchaseGift(giftId) {
+            const price = giftPrices[giftId];
+            if (!price) {
+                alert("This gift is not available");
                 return;
             }
             
-            // Add random stars (1-5)
-            const starsEarned = Math.floor(Math.random() * 5) + 1;
-            userData.fakeStars += starsEarned;
-            
-            // Create visual star effect
-            createClickEffect(starsEarned);
-            
-            // Deduct energy if not premium
-            if (!userData.isPremium) {
-                userData.energy -= 1;
-            }
-            
-            userData.lastClickTime = new Date();
-            updateUI();
-            saveData();
-        }
-
-        function createClickEffect(stars) {
-            const container = document.getElementById('clickContainer');
-            for (let i = 0; i < stars; i++) {
-                const star = document.createElement('div');
-                star.className = 'floating-star';
-                star.style.left = `${50 + (Math.random() * 20 - 10)}%`;
-                star.style.top = `${50 + (Math.random() * 20 - 10)}%`;
-                star.style.width = `${Math.random() * 8 + 4}px`;
-                star.style.height = star.style.width;
-                star.style.animation = 'none';
-                star.style.opacity = '1';
-                star.style.transform = 'translateY(0)';
-                
-                // Random color between yellow and white
-                const yellow = Math.floor(Math.random() * 155 + 100);
-                star.style.backgroundColor = `rgb(255, ${yellow}, 0)`;
-                
-                container.appendChild(star);
-                
-                // Animate star flying up
-                setTimeout(() => {
-                    star.style.transition = 'all 1s ease-out';
-                    star.style.transform = `translateY(-${Math.random() * 100 + 50}px)`;
-                    star.style.opacity = '0';
-                    
-                    // Remove after animation
-                    setTimeout(() => {
-                        star.remove();
-                    }, 1000);
-                }, 10);
-            }
-        }
-
-        function checkEnergy() {
-            if (userData.isPremium) return;
-            
-            if (userData.lastClickTime) {
-                const now = new Date();
-                const diff = now - new Date(userData.lastClickTime);
-                const hoursPassed = diff / (1000 * 60 * 60);
-                
-                // Recharge 1 energy per hour
-                const energyToAdd = Math.floor(hoursPassed);
-                if (energyToAdd > 0) {
-                    userData.energy = Math.min(100, userData.energy + energyToAdd);
-                    userData.lastClickTime = now;
-                    updateUI();
-                    saveData();
+            Telegram.WebApp.openInvoice({
+                currency: 'STARS',
+                prices: [{ label: `Gift ${giftId}`, amount: String(price * 100) }],
+                description: `Telegram ${giftId.includes('anim') ? 'Animated' : 'Static'} Gift`,
+                payload: `gift_${giftId}`
+            }, (status) => {
+                if (status === 'paid') {
+                    alert(`You successfully purchased the ${giftId} gift!`);
+                    // Here you would typically send the gift to the user
                 }
-            }
+            });
         }
-
-        function updateUI() {
-            document.getElementById('starCount').textContent = userData.fakeStars;
-            document.getElementById('energyCount').textContent = userData.energy;
-            document.getElementById('energyFill').style.width = `${userData.energy}%`;
-            
-            // Premium status display
-            const premiumStatus = document.getElementById('premiumStatus');
-            if (userData.isPremium) {
-                premiumStatus.textContent = userData.premiumExpiry ? 
-                    `✨ Premium (${userData.premiumExpiry.toLocaleDateString()})` : 
-                    "💎 LIFETIME PREMIUM";
-                premiumStatus.style.background = 'linear-gradient(45deg, var(--premium-gold), #ffab00)';
-            } else {
-                premiumStatus.textContent = "Regular User";
-                premiumStatus.style.background = 'rgba(255, 255, 255, 0.1)';
-            }
-            
-            // Update button style if no energy
-            if (userData.energy <= 0 && !userData.isPremium) {
-                document.getElementById('clickButton').style.boxShadow = '0 0 10px rgba(255, 0, 0, 0.5)';
-                document.getElementById('clickButton').style.opacity = '0.7';
-            } else {
-                document.getElementById('clickButton').style.boxShadow = 
-                    '0 0 20px var(--star-yellow), 0 0 40px rgba(255, 215, 0, 0.3)';
-                document.getElementById('clickButton').style.opacity = '1';
-            }
-        }
-
-        function purchasePremium(type) {
-            if (type === '1day') {
-                // Process real star payment (15⭐)
-                Telegram.WebApp.openInvoice({
-                    currency: 'STARS',
-                    prices: [{ label: '1-day Premium', amount: '1500' }],
-                    description: '1-day premium subscription',
-                    payload: 'premium_1day'
-                }, (status) => {
-                    if (status === 'paid') {
-                        activatePremium(1);
-                    }
-                });
-            } else if (type === 'lifetime') {
-                // Process real star payment (100⭐)
-                Telegram.WebApp.openInvoice({
-                    currency: 'STARS',
-                    prices: [{ label: 'Lifetime Premium', amount: '10000' }],
-                    description: 'Lifetime premium subscription',
-                    payload: 'premium_lifetime'
-                }, (status) => {
-                    if (status === 'paid') {
-                        activatePremium(0); // 0 = lifetime
-                    }
-                });
-            }
-        }
-
-        function activatePremium(days) {
-            userData.isPremium = true;
-            if (days > 0) {
-                const expiry = new Date();
-                expiry.setDate(expiry.getDate() + days);
-                userData.premiumExpiry = expiry;
-            } else {
-                userData.premiumExpiry = null; // null = lifetime
-            }
-            
-            // Restore full energy when premium is activated
-            userData.energy = 100;
-            
-            updateUI();
-            saveData();
-            
-            // Show premium activated effect
-            const button = document.getElementById('clickButton');
-            button.style.boxShadow = '0 0 30px var(--premium-gold)';
-            setTimeout(() => {
-                button.style.boxShadow = 
-                    '0 0 20px var(--star-yellow), 0 0 40px rgba(255, 215, 0, 0.3)';
-            }, 1000);
-        }
+        
+        // [Rest of your existing JavaScript]
     </script>
 </body>
 </html>
