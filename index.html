@@ -1,646 +1,88 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HT Spinner - Зарабатывайте звёзды</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-        
-        header {
-            background-color: #0088cc;
-            color: white;
-            padding: 15px 0;
-            text-align: center;
-            border-radius: 0 0 10px 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-        }
-        
-        .nav-tabs {
-            display: flex;
-            justify-content: center;
-            margin: 20px 0;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            overflow: hidden;
-        }
-        
-        .tab {
-            padding: 15px 30px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .tab.active {
-            background-color: #0088cc;
-            color: white;
-        }
-        
-        .tab-content {
-            display: none;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .click-area {
-            background-color: #0088cc;
-            color: white;
-            text-align: center;
-            padding: 50px;
-            border-radius: 10px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            user-select: none;
-            transition: transform 0.1s;
-        }
-        
-        .click-area:active {
-            transform: scale(0.98);
-        }
-        
-        .stats {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-        
-        .stat-box {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            text-align: center;
-            flex: 1;
-            margin: 0 10px;
-        }
-        
-        .shop-item {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .btn {
-            background-color: #0088cc;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        
-        .btn:hover {
-            background-color: #006699;
-        }
-        
-        .btn-premium {
-            background-color: gold;
-            color: #333;
-            font-weight: bold;
-        }
-        
-        .energy-bar {
-            height: 20px;
-            background-color: #e0e0e0;
-            border-radius: 10px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-        
-        .energy-fill {
-            height: 100%;
-            background-color: #4CAF50;
-            width: 100%;
-            transition: width 0.5s;
-        }
-        
-        .premium-badge {
-            background-color: gold;
-            color: #333;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-weight: bold;
-            display: inline-block;
-            margin-left: 10px;
-        }
-        
-        footer {
-            text-align: center;
-            padding: 20px;
-            background-color: #0088cc;
-            color: white;
-            border-radius: 10px 10px 0 0;
-            margin-top: 20px;
-        }
-    </style>
+  <title>Star Collector</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    #clickButton {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background-color: #ffcc00;
+      border: none;
+      font-size: 24px;
+      margin: 20px auto;
+      cursor: pointer;
+    }
+    .stats {
+      margin: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+    }
+    #premiumStatus {
+      padding: 5px 10px;
+      border-radius: 5px;
+      margin: 10px auto;
+      display: inline-block;
+    }
+    .shop-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin: 10px;
+      border-radius: 5px;
+    }
+    .premium-offer {
+      background-color: gold;
+      padding: 15px;
+      margin: 15px 0;
+      border-radius: 10px;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <div class="logo">HT SPINNER</div>
-        </div>
-    </header>
+  <div id="mainPage">
+    <h1>Star Collector</h1>
     
-    <div class="container">
-        <div class="nav-tabs">
-            <div class="tab active" onclick="openTab('click')">Кликать</div>
-            <div class="tab" onclick="openTab('shop')">Магазин</div>
-            <div class="tab" onclick="openTab('payments')">Выплаты</div>
-        </div>
-        
-        <div id="click" class="tab-content active">
-            <div class="stats">
-                <div class="stat-box">
-                    <h3>Звёзды</h3>
-                    <p id="stars-count">0</p>
-                </div>
-                <div class="stat-box">
-                    <h3>Энергия</h3>
-                    <p id="energy-count">100/100</p>
-                    <div class="energy-bar">
-                        <div class="energy-fill" id="energy-fill"></div>
-                    </div>
-                </div>
-                <div class="stat-box">
-                    <h3>Статус</h3>
-                    <p>Обычный <span id="premium-badge" class="premium-badge" style="display: none;">PREMIUM</span></p>
-                </div>
-            </div>
-            
-            <div class="click-area" onclick="clickStar()">
-                <h2>КЛИКАЙТЕ ДЛЯ ЗВЁЗД</h2>
-                <p>Каждый клик = 1 звезда</p>
-                <p id="click-multiplier">Множитель: 1x</p>
-            </div>
-            
-            <div class="stats">
-                <div class="stat-box">
-                    <h3>Всего кликов</h3>
-                    <p id="total-clicks">0</p>
-                </div>
-                <div class="stat-box">
-                    <h3>Рекорд</h3>
-                    <p id="record-clicks">0</p>
-                </div>
-                <div class="stat-box">
-                    <h3>Звёзд/сек</h3>
-                    <p id="stars-per-second">0</p>
-                </div>
-            </div>
-        </div>
-        
-        <div id="shop" class="tab-content">
-            <h2>Магазин</h2>
-            
-            <div class="shop-item">
-                <div>
-                    <h3>Премиум на 1 день</h3>
-                    <p>Убирает энергию, даёт x2 кликов, эксклюзивный статус</p>
-                </div>
-                <button class="btn btn-premium" onclick="buyPremium(1)">15 звёзд</button>
-            </div>
-            
-            <div class="shop-item">
-                <div>
-                    <h3>Премиум навсегда</h3>
-                    <p>Пожизненный доступ ко всем преимуществам Premium</p>
-                </div>
-                <button class="btn btn-premium" onclick="buyPremium(2)">100 звёзд</button>
-            </div>
-            
-            <h3>Telegram подарки</h3>
-            
-            <div class="shop-item">
-                <div>
-                    <h3>Emoji Pack #1</h3>
-                    <p>Эксклюзивный набор emoji для Telegram</p>
-                </div>
-                <button class="btn" onclick="buyItem('emoji1')">25 звёзд</button>
-            </div>
-            
-            <div class="shop-item">
-                <div>
-                    <h3>Sticker Pack "Premium"</h3>
-                    <p>Коллекция стикеров только для избранных</p>
-                </div>
-                <button class="btn" onclick="buyItem('sticker1')">50 звёзд</button>
-            </div>
-            
-            <div class="shop-item">
-                <div>
-                    <h3>NFT Badge</h3>
-                    <p>Эксклюзивный NFT значок для вашего профиля</p>
-                </div>
-                <button class="btn" onclick="buyItem('nft1')">150 звёзд</button>
-            </div>
-            
-            <div class="shop-item">
-                <div>
-                    <h3>Animated Avatar Frame</h3>
-                    <p>Анимированная рамка для аватара в Telegram</p>
-                </div>
-                <button class="btn" onclick="buyItem('frame1')">75 звёзд</button>
-            </div>
-        </div>
-        
-        <div id="payments" class="tab-content">
-            <h2>Выплаты Онлайн</h2>
-            
-            <div class="shop-item">
-                <div>
-                    <h3>Купить звёзды</h3>
-                    <p>100 звёзд за 1$</p>
-                </div>
-                <button class="btn" onclick="showPaymentModal()">Купить</button>
-            </div>
-            
-            <div class="shop-item">
-                <div>
-                    <h3>Вывести звёзды</h3>
-                    <p>1000 звёзд = 5$ (минимальная сумма)</p>
-                </div>
-                <button class="btn" onclick="showWithdrawModal()">Вывести</button>
-            </div>
-            
-            <h3>История операций</h3>
-            <div id="transactions-history" style="background: white; padding: 15px; border-radius: 10px;">
-                <p style="text-align: center; color: #888;">Нет операций</p>
-            </div>
-        </div>
+    <div class="stats">
+      <div>Stars: <span id="starCount">0</span></div>
+      <div>Energy: <span id="energyCount">100</span>/100</div>
+      <div id="premiumStatus">Regular User</div>
     </div>
     
-    <footer>
-        <div class="container">
-            <p>HT Spinner © 2023 | Все права защищены</p>
-            <p>Связь с поддержкой: @htspinner_support</p>
-        </div>
-    </footer>
+    <button id="clickButton">Click for Stars!</button>
     
-    <!-- Модальные окна -->
-    <div id="payment-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 100%;">
-            <h2>Покупка звёзд</h2>
-            <p>Выберите количество звёзд для покупки:</p>
-            <select id="stars-amount" style="width: 100%; padding: 10px; margin: 10px 0;">
-                <option value="100">100 звёзд - 1$</option>
-                <option value="500">500 звёзд - 4$ (20% скидка)</option>
-                <option value="1000">1000 звёзд - 7$ (30% скидка)</option>
-                <option value="5000">5000 звёзд - 30$ (40% скидка)</option>
-            </select>
-            <p>Выберите способ оплаты:</p>
-            <div style="margin: 10px 0;">
-                <label><input type="radio" name="payment-method" value="card" checked> Банковская карта</label><br>
-                <label><input type="radio" name="payment-method" value="crypto"> Криптовалюта</label><br>
-                <label><input type="radio" name="payment-method" value="qiwi"> Qiwi</label>
-            </div>
-            <button class="btn" style="width: 100%;" onclick="processPayment()">Оплатить</button>
-            <button class="btn" style="width: 100%; margin-top: 10px; background: #ccc;" onclick="hideModal('payment-modal')">Отмена</button>
-        </div>
+    <button id="shopButton">Shop</button>
+  </div>
+  
+  <div id="shopPage" style="display:none;">
+    <h1>Shop</h1>
+    <button id="backButton">Back</button>
+    
+    <h2>Premium Subscriptions</h2>
+    <div class="premium-offer">
+      <h3>1-Day Premium</h3>
+      <p>Unlimited energy for 1 day</p>
+      <p>Price: 15⭐</p>
+      <button onclick="purchasePremium('1day')">Buy</button>
     </div>
     
-    <div id="withdraw-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 100%;">
-            <h2>Вывод средств</h2>
-            <p>Минимальная сумма вывода: 1000 звёзд (5$)</p>
-            <p>Ваш баланс: <span id="withdraw-balance">0</span> звёзд</p>
-            <input type="number" id="withdraw-amount" placeholder="Количество звёзд" style="width: 100%; padding: 10px; margin: 10px 0;">
-            <p>Выберите способ вывода:</p>
-            <div style="margin: 10px 0;">
-                <label><input type="radio" name="withdraw-method" value="card" checked> Банковская карта</label><br>
-                <label><input type="radio" name="withdraw-method" value="crypto"> Криптовалюта</label><br>
-                <label><input type="radio" name="withdraw-method" value="qiwi"> Qiwi</label>
-            </div>
-            <button class="btn" style="width: 100%;" onclick="processWithdraw()">Вывести</button>
-            <button class="btn" style="width: 100%; margin-top: 10px; background: #ccc;" onclick="hideModal('withdraw-modal')">Отмена</button>
-        </div>
+    <div class="premium-offer">
+      <h3>Lifetime Premium</h3>
+      <p>Unlimited energy forever!</p>
+      <p>Price: 100⭐</p>
+      <button onclick="purchasePremium('lifetime')">Buy</button>
     </div>
     
-    <div id="success-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center;">
-        <div style="background: white; padding: 20px; border-radius: 10px; max-width: 500px; width: 100%; text-align: center;">
-            <h2 style="color: #4CAF50;">Успешно!</h2>
-            <p id="success-message">Ваша операция выполнена успешно.</p>
-            <button class="btn" style="width: 100%; margin-top: 20px;" onclick="hideModal('success-modal')">OK</button>
-        </div>
-    </div>
-    
-    <script>
-        // Состояние игры
-        let gameState = {
-            stars: 0,
-            energy: 100,
-            maxEnergy: 100,
-            totalClicks: 0,
-            recordClicks: 0,
-            clicksPerSession: 0,
-            isPremium: false,
-            premiumExpires: null,
-            clickMultiplier: 1,
-            itemsBought: [],
-            transactions: []
-        };
-        
-        // Восстановление энергии
-        let energyInterval;
-        
-        // Инициализация игры
-        function initGame() {
-            // Загрузка сохранённого состояния
-            const savedState = localStorage.getItem('htSpinnerGameState');
-            if (savedState) {
-                gameState = JSON.parse(savedState);
-                updateUI();
-            }
-            
-            // Запуск восстановления энергии
-            energyInterval = setInterval(restoreEnergy, 1000);
-            
-            // Проверка Premium статуса
-            checkPremiumStatus();
-        }
-        
-        // Обновление интерфейса
-        function updateUI() {
-            document.getElementById('stars-count').textContent = gameState.stars;
-            document.getElementById('energy-count').textContent = `${gameState.energy}/${gameState.maxEnergy}`;
-            document.getElementById('energy-fill').style.width = `${(gameState.energy / gameState.maxEnergy) * 100}%`;
-            document.getElementById('total-clicks').textContent = gameState.totalClicks;
-            document.getElementById('record-clicks').textContent = gameState.recordClicks;
-            document.getElementById('click-multiplier').textContent = `Множитель: ${gameState.clickMultiplier}x`;
-            document.getElementById('withdraw-balance').textContent = gameState.stars;
-            
-            if (gameState.isPremium) {
-                document.getElementById('premium-badge').style.display = 'inline-block';
-            } else {
-                document.getElementById('premium-badge').style.display = 'none';
-            }
-            
-            // Сохранение состояния
-            saveGameState();
-        }
-        
-        // Клик по звезде
-        function clickStar() {
-            if (gameState.energy <= 0 && !gameState.isPremium) {
-                alert('Недостаточно энергии! Подождите или купите Premium.');
-                return;
-            }
-            
-            // Добавление звёзд с учётом множителя
-            gameState.stars += gameState.clickMultiplier;
-            gameState.totalClicks += gameState.clickMultiplier;
-            gameState.clicksPerSession += gameState.clickMultiplier;
-            
-            if (!gameState.isPremium) {
-                gameState.energy -= 1;
-            }
-            
-            // Обновление рекорда
-            if (gameState.clicksPerSession > gameState.recordClicks) {
-                gameState.recordClicks = gameState.clicksPerSession;
-            }
-            
-            updateUI();
-            
-            // Анимация клика
-            const clickArea = document.querySelector('.click-area');
-            clickArea.style.transform = 'scale(0.98)';
-            setTimeout(() => {
-                clickArea.style.transform = 'scale(1)';
-            }, 100);
-        }
-        
-        // Восстановление энергии
-        function restoreEnergy() {
-            if (gameState.energy < gameState.maxEnergy && !gameState.isPremium) {
-                gameState.energy += 1;
-                updateUI();
-            }
-        }
-        
-        // Покупка Premium
-        function buyPremium(type) {
-            let cost, days;
-            
-            if (type === 1) { // 1 день
-                cost = 15;
-                days = 1;
-            } else { // Навсегда
-                cost = 100;
-                days = 36500; // ~100 лет
-            }
-            
-            if (gameState.stars < cost) {
-                alert('Недостаточно звёзд!');
-                return;
-            }
-            
-            gameState.stars -= cost;
-            gameState.isPremium = true;
-            gameState.clickMultiplier = 2;
-            
-            // Установка срока действия Premium
-            const now = new Date();
-            now.setDate(now.getDate() + days);
-            gameState.premiumExpires = now.toISOString();
-            
-            showSuccessMessage(`Premium активирован на ${days === 1 ? '1 день' : 'пожизненно'}!`);
-            updateUI();
-        }
-        
-        // Проверка Premium статуса
-        function checkPremiumStatus() {
-            if (!gameState.isPremium || !gameState.premiumExpires) return;
-            
-            const now = new Date();
-            const expires = new Date(gameState.premiumExpires);
-            
-            if (now > expires) {
-                gameState.isPremium = false;
-                gameState.clickMultiplier = 1;
-                gameState.premiumExpires = null;
-                updateUI();
-            }
-        }
-        
-        // Покупка предмета
-        function buyItem(itemId) {
-            const items = {
-                'emoji1': { cost: 25, name: 'Emoji Pack #1' },
-                'sticker1': { cost: 50, name: 'Sticker Pack "Premium"' },
-                'nft1': { cost: 150, name: 'NFT Badge' },
-                'frame1': { cost: 75, name: 'Animated Avatar Frame' }
-            };
-            
-            const item = items[itemId];
-            
-            if (!item) return;
-            
-            if (gameState.stars < item.cost) {
-                alert('Недостаточно звёзд!');
-                return;
-            }
-            
-            if (gameState.itemsBought.includes(itemId)) {
-                alert('Вы уже купили этот предмет!');
-                return;
-            }
-            
-            gameState.stars -= item.cost;
-            gameState.itemsBought.push(itemId);
-            
-            // Добавление транзакции
-            gameState.transactions.push({
-                type: 'purchase',
-                item: item.name,
-                cost: item.cost,
-                date: new Date().toLocaleString()
-            });
-            
-            showSuccessMessage(`Вы успешно приобрели ${item.name}!`);
-            updateUI();
-        }
-        
-        // Переключение вкладок
-        function openTab(tabName) {
-            // Скрыть все вкладки
-            const tabContents = document.getElementsByClassName('tab-content');
-            for (let i = 0; i < tabContents.length; i++) {
-                tabContents[i].classList.remove('active');
-            }
-            
-            // Убрать активный класс у всех кнопок
-            const tabs = document.getElementsByClassName('tab');
-            for (let i = 0; i < tabs.length; i++) {
-                tabs[i].classList.remove('active');
-            }
-            
-            // Показать выбранную вкладку
-            document.getElementById(tabName).classList.add('active');
-            
-            // Сделать кнопку активной
-            event.currentTarget.classList.add('active');
-        }
-        
-        // Показ модального окна оплаты
-        function showPaymentModal() {
-            document.getElementById('payment-modal').style.display = 'flex';
-        }
-        
-        // Показ модального окна вывода
-        function showWithdrawModal() {
-            document.getElementById('withdraw-modal').style.display = 'flex';
-        }
-        
-        // Скрытие модального окна
-        function hideModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-        
-        // Обработка оплаты
-        function processPayment() {
-            const starsAmount = parseInt(document.getElementById('stars-amount').value);
-            const paymentMethod = document.querySelector('input[name="payment-method"]:checked').value;
-            
-            // Здесь должна быть реальная интеграция с платежной системой
-            // Для демонстрации просто добавляем звёзды
-            
-            gameState.stars += starsAmount;
-            
-            // Добавление транзакции
-            gameState.transactions.push({
-                type: 'deposit',
-                amount: starsAmount,
-                method: paymentMethod,
-                date: new Date().toLocaleString()
-            });
-            
-            hideModal('payment-modal');
-            showSuccessMessage(`Вы успешно приобрели ${starsAmount} звёзд!`);
-            updateUI();
-        }
-        
-        // Обработка вывода
-        function processWithdraw() {
-            const withdrawAmount = parseInt(document.getElementById('withdraw-amount').value);
-            const withdrawMethod = document.querySelector('input[name="withdraw-method"]:checked').value;
-            
-            if (isNaN(withdrawAmount) {
-                alert('Введите корректную сумму!');
-                return;
-            }
-            
-            if (withdrawAmount < 1000) {
-                alert('Минимальная сумма вывода - 1000 звёзд!');
-                return;
-            }
-            
-            if (gameState.stars < withdrawAmount) {
-                alert('Недостаточно звёзд для вывода!');
-                return;
-            }
-            
-            // Здесь должна быть реальная интеграция с платежной системой
-            // Для демонстрации просто уменьшаем баланс
-            
-            gameState.stars -= withdrawAmount;
-            
-            // Добавление транзакции
-            gameState.transactions.push({
-                type: 'withdraw',
-                amount: withdrawAmount,
-                method: withdrawMethod,
-                date: new Date().toLocaleString()
-            });
-            
-            hideModal('withdraw-modal');
-            showSuccessMessage(`Заявка на вывод ${withdrawAmount} звёзд принята! Обработка займет до 24 часов.`);
-            updateUI();
-        }
-        
-        // Показ сообщения об успехе
-        function showSuccessMessage(message) {
-            document.getElementById('success-message').textContent = message;
-            document.getElementById('success-modal').style.display = 'flex';
-        }
-        
-        // Сохранение состояния игры
-        function saveGameState() {
-            localStorage.setItem('htSpinnerGameState', JSON.stringify(gameState));
-        }
-        
-        // Инициализация при загрузке
-        window.onload = initGame;
-    </script>
+    <h2>Telegram Gifts</h2>
+    <!-- List of Telegram gifts would go here -->
+  </div>
+  
+  <script src="app.js"></script>
 </body>
 </html>
