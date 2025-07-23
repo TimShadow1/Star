@@ -3,213 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🌟 Ultimate Star Collector</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <title>Telegram Gift Shop</title>
     <style>
-        /* [Previous CSS styles remain exactly the same] */
-        /* Add this new style for gift images */
-        .gift-image {
-            width: 100px;
-            height: 100px;
-            object-fit: contain;
-            margin: 0 auto 15px;
-            display: block;
-            filter: drop-shadow(0 0 5px rgba(0, 243, 255, 0.5));
+        :root {
+            --primary: #0088cc;
+            --secondary: #f5f5f5;
+            --accent: #ff6b00;
+            --text: #333333;
+            --bg: #ffffff;
         }
         
-        .premium-offer .gift-image {
-            filter: drop-shadow(0 0 10px rgba(255, 193, 7, 0.7));
+        body {
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .gift-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .gift-card {
+            background-color: var(--secondary);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .gift-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gift-title {
+            font-size: 1.4rem;
+            color: var(--primary);
+            margin: 0 0 10px;
+        }
+        
+        .gift-description {
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+        
+        .gift-price {
+            font-weight: bold;
+            color: var(--accent);
+            font-size: 1.2rem;
+            margin: 10px 0;
+        }
+        
+        .gift-meta {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .divider {
+            height: 1px;
+            background-color: #eee;
+            margin: 30px 0;
+        }
+        
+        .section-title {
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+        
+        .color-palette {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .color-box {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <!-- [Previous HTML structure remains the same until the shop page] -->
-    
-    <!-- Shop Page -->
-    <div id="shopPage" class="page">
-        <h1>🌟 STAR SHOP</h1>
+    <div class="container">
+        <h1>Telegram Gift Shop</h1>
         
-        <button class="nav-button" id="backButton">← Back</button>
-        
-        <div class="shop-item premium-offer">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/baseline_stars_24.png" class="gift-image" alt="Premium">
-            <h3>✨ 1-Day Premium</h3>
-            <p>Unlimited energy for 24 hours</p>
-            <p>No energy consumption</p>
-            <p>Exclusive golden star effects</p>
-            <div class="price">15 ⭐</div>
-            <button class="buy-button" id="buy1Day">GET PREMIUM</button>
+        <div class="gift-grid">
+            <!-- Confetti Celebration -->
+            <div class="gift-card">
+                <h2 class="gift-title">Confetti Celebration</h2>
+                <p class="gift-description">Colorful animated confetti</p>
+                <div class="gift-price">50 ⭐</div>
+                <div class="gift-meta">80% GPT1</div>
+            </div>
+            
+            <!-- Shooting Stars -->
+            <div class="gift-card">
+                <h2 class="gift-title">Shooting Stars</h2>
+                <p class="gift-description">Beautiful starry night effect</p>
+                <div class="gift-price">50 ⭐</div>
+                <div class="gift-meta">80% GPT1</div>
+            </div>
+            
+            <!-- Floating Balloon -->
+            <div class="gift-card">
+                <h2 class="gift-title">Floating Balloon</h2>
+                <p class="gift-description">Cute animated balloon</p>
+                <div class="gift-price">40 ⭐</div>
+                <div class="gift-meta">80% GPT1</div>
+            </div>
+            
+            <!-- Sweet Candy -->
+            <div class="gift-card">
+                <h2 class="gift-title">Sweet Candy</h2>
+                <p class="gift-description">Delicious looking candy</p>
+                <div class="gift-price">30 ⭐</div>
+            </div>
         </div>
         
-        <div class="shop-item premium-offer">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/baseline_stars_24.png" class="gift-image" alt="Lifetime Premium">
-            <h3>💎 Lifetime Premium</h3>
-            <p>Permanent unlimited energy</p>
-            <p>All premium features forever</p>
-            <p>Special cosmic collector badge</p>
-            <div class="price">100 ⭐</div>
-            <button class="buy-button" id="buyLifetime">GET LIFETIME</button>
-        </div>
+        <div class="divider"></div>
         
-        <h2 style="margin-top: 30px; color: var(--neon-blue);">Telegram Premium Gifts</h2>
-        
-        <!-- Animated Gifts -->
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animconfetti.json.gif" class="gift-image" alt="Confetti">
-            <h3>🎉 Confetti Celebration</h3>
-            <p>Colorful animated confetti</p>
-            <div class="price">50 ⭐</div>
-            <button class="buy-button" data-gift="animconfetti">BUY GIFT</button>
-        </div>
-        
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animstars.json.gif" class="gift-image" alt="Shooting Stars">
-            <h3>🌠 Shooting Stars</h3>
-            <p>Beautiful starry night effect</p>
-            <div class="price">50 ⭐</div>
-            <button class="buy-button" data-gift="animstars">BUY GIFT</button>
-        </div>
-        
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animballoon.json.gif" class="gift-image" alt="Balloon">
-            <h3>🎈 Floating Balloon</h3>
-            <p>Cute animated balloon</p>
-            <div class="price">40 ⭐</div>
-            <button class="buy-button" data-gift="animballoon">BUY GIFT</button>
-        </div>
-        
-        <!-- Static Gifts -->
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticcandy.png" class="gift-image" alt="Candy">
-            <h3>🍬 Sweet Candy</h3>
-            <p>Delicious looking candy</p>
-            <div class="price">30 ⭐</div>
-            <button class="buy-button" data-gift="staticcandy">BUY GIFT</button>
-        </div>
-        
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticcake.png" class="gift-image" alt="Cake">
-            <h3>🍰 Birthday Cake</h3>
-            <p>Perfect for celebrations</p>
-            <div class="price">35 ⭐</div>
-            <button class="buy-button" data-gift="staticcake">BUY GIFT</button>
-        </div>
-        
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticcrown.png" class="gift-image" alt="Crown">
-            <h3>👑 Golden Crown</h3>
-            <p>Royal premium gift</p>
-            <div class="price">60 ⭐</div>
-            <button class="buy-button" data-gift="staticcrown">BUY GIFT</button>
-        </div>
-        
-        <!-- More Gifts -->
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animfireworks.json.gif" class="gift-image" alt="Fireworks">
-            <h3>🎆 Fireworks</h3>
-            <p>Spectacular light show</p>
-            <div class="price">55 ⭐</div>
-            <button class="buy-button" data-gift="animfireworks">BUY GIFT</button>
-        </div>
-        
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticicecream.png" class="gift-image" alt="Ice Cream">
-            <h3>🍦 Ice Cream</h3>
-            <p>Sweet frozen treat</p>
-            <div class="price">25 ⭐</div>
-            <button class="buy-button" data-gift="staticicecream">BUY GIFT</button>
-        </div>
-        
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticmoney.png" class="gift-image" alt="Money">
-            <h3>💰 Money Bag</h3>
-            <p>For prosperous friends</p>
-            <div class="price">45 ⭐</div>
-            <button class="buy-button" data-gift="staticmoney">BUY GIFT</button>
-        </div>
-        
-        <!-- Complete the list with all available gifts -->
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/animheart.json.gif" class="gift-image" alt="Heart">
-            <h3>💖 Beating Heart</h3>
-            <p>Show your love</p>
-            <div class="price">40 ⭐</div>
-            <button class="buy-button" data-gift="animheart">BUY GIFT</button>
-        </div>
-        
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticflower.png" class="gift-image" alt="Flower">
-            <h3>🌹 Beautiful Flower</h3>
-            <p>Elegant floral gift</p>
-            <div class="price">30 ⭐</div>
-            <button class="buy-button" data-gift="staticflower">BUY GIFT</button>
-        </div>
-        
-        <div class="shop-item">
-            <img src="https://raw.githubusercontent.com/telegramdesktop/tdesktop/dev/Telegram/Resources/art/gifts/staticgift.png" class="gift-image" alt="Gift Box">
-            <h3>🎁 Gift Box</h3>
-            <p>Classic present</p>
-            <div class="price">35 ⭐</div>
-            <button class="buy-button" data-gift="staticgift">BUY GIFT</button>
+        <h2 class="section-title">Coloring</h2>
+        <div class="color-palette">
+            <div class="color-box" style="background-color: #0088cc;">Stars</div>
+            <div class="color-box" style="background-color: #ff6b00;">Balloon</div>
+            <div class="color-box" style="background-color: #ffcc00;">Candy</div>
         </div>
     </div>
-
-    <script>
-        // [Previous JavaScript remains the same until the end]
-        
-        // Add this new gift purchase handler
-        document.querySelectorAll('[data-gift]').forEach(button => {
-            button.addEventListener('click', function() {
-                const giftId = this.getAttribute('data-gift');
-                purchaseGift(giftId);
-            });
-        });
-        
-        // Gift prices mapping
-        const giftPrices = {
-            // Premium
-            '1day': 15,
-            'lifetime': 100,
-            
-            // Animated gifts
-            'animconfetti': 50,
-            'animstars': 50,
-            'animballoon': 40,
-            'animfireworks': 55,
-            'animheart': 40,
-            
-            // Static gifts
-            'staticcandy': 30,
-            'staticcake': 35,
-            'staticcrown': 60,
-            'staticicecream': 25,
-            'staticmoney': 45,
-            'staticflower': 30,
-            'staticgift': 35
-        };
-        
-        function purchaseGift(giftId) {
-            const price = giftPrices[giftId];
-            if (!price) {
-                alert("This gift is not available");
-                return;
-            }
-            
-            Telegram.WebApp.openInvoice({
-                currency: 'STARS',
-                prices: [{ label: `Gift ${giftId}`, amount: String(price * 100) }],
-                description: `Telegram ${giftId.includes('anim') ? 'Animated' : 'Static'} Gift`,
-                payload: `gift_${giftId}`
-            }, (status) => {
-                if (status === 'paid') {
-                    alert(`You successfully purchased the ${giftId} gift!`);
-                    // Here you would typically send the gift to the user
-                }
-            });
-        }
-        
-        // [Rest of your existing JavaScript]
-    </script>
 </body>
 </html>
