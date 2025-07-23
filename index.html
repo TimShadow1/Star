@@ -1,88 +1,119 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Star Collector</title>
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-      padding: 20px;
-    }
-    #clickButton {
-      width: 200px;
-      height: 200px;
-      border-radius: 50%;
-      background-color: #ffcc00;
-      border: none;
-      font-size: 24px;
-      margin: 20px auto;
-      cursor: pointer;
-    }
-    .stats {
-      margin: 20px;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 10px;
-    }
-    #premiumStatus {
-      padding: 5px 10px;
-      border-radius: 5px;
-      margin: 10px auto;
-      display: inline-block;
-    }
-    .shop-item {
-      border: 1px solid #ddd;
-      padding: 10px;
-      margin: 10px;
-      border-radius: 5px;
-    }
-    .premium-offer {
-      background-color: gold;
-      padding: 15px;
-      margin: 15px 0;
-      border-radius: 10px;
-    }
-  </style>
+    <title>Star Collector</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        #clickButton {
+            width: 200px; height: 200px; border-radius: 50%;
+            background-color: #ffcc00; border: none;
+            font-size: 24px; margin: 20px auto; cursor: pointer;
+        }
+        .stats { margin: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 10px; }
+        #premiumStatus { padding: 5px 10px; border-radius: 5px; margin: 10px auto; display: inline-block; }
+        .shop-item { border: 1px solid #ddd; padding: 10px; margin: 10px; border-radius: 5px; }
+        .premium-offer { background-color: gold; padding: 15px; margin: 15px 0; border-radius: 10px; }
+        .page { display: none; }
+        .active { display: block !important; }
+    </style>
 </head>
 <body>
-  <div id="mainPage">
-    <h1>Star Collector</h1>
-    
-    <div class="stats">
-      <div>Stars: <span id="starCount">0</span></div>
-      <div>Energy: <span id="energyCount">100</span>/100</div>
-      <div id="premiumStatus">Regular User</div>
+    <div id="mainPage" class="page active">
+        <h1>Star Collector</h1>
+        <div class="stats">
+            <div>Stars: <span id="starCount">0</span></div>
+            <div>Energy: <span id="energyCount">100</span>/100</div>
+            <div id="premiumStatus">Regular User</div>
+        </div>
+        <button id="clickButton">Click for Stars!</button>
+        <button id="shopButton">Shop</button>
     </div>
     
-    <button id="clickButton">Click for Stars!</button>
-    
-    <button id="shopButton">Shop</button>
-  </div>
-  
-  <div id="shopPage" style="display:none;">
-    <h1>Shop</h1>
-    <button id="backButton">Back</button>
-    
-    <h2>Premium Subscriptions</h2>
-    <div class="premium-offer">
-      <h3>1-Day Premium</h3>
-      <p>Unlimited energy for 1 day</p>
-      <p>Price: 15⭐</p>
-      <button onclick="purchasePremium('1day')">Buy</button>
+    <div id="shopPage" class="page">
+        <h1>Shop</h1>
+        <button id="backButton">Back</button>
+        <div class="premium-offer">
+            <h3>1-Day Premium</h3>
+            <p>Unlimited energy for 1 day</p>
+            <p>Price: 15⭐</p>
+            <button id="buy1Day">Buy</button>
+        </div>
+        <div class="premium-offer">
+            <h3>Lifetime Premium</h3>
+            <p>Unlimited energy forever!</p>
+            <p>Price: 100⭐</p>
+            <button id="buyLifetime">Buy</button>
+        </div>
     </div>
-    
-    <div class="premium-offer">
-      <h3>Lifetime Premium</h3>
-      <p>Unlimited energy forever!</p>
-      <p>Price: 100⭐</p>
-      <button onclick="purchasePremium('lifetime')">Buy</button>
-    </div>
-    
-    <h2>Telegram Gifts</h2>
-    <!-- List of Telegram gifts would go here -->
-  </div>
-  
-  <script src="app.js"></script>
+
+    <script>
+        // Initialize user data
+        let userData = {
+            fakeStars: 0,
+            energy: 100,
+            isPremium: false,
+            premiumExpiry: null,
+            lastClickTime: null
+        };
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log("DOM loaded");
+            
+            // Initialize Telegram WebApp
+            if (window.Telegram && Telegram.WebApp) {
+                Telegram.WebApp.ready();
+                Telegram.WebApp.expand();
+                console.log("Telegram WebApp initialized");
+            } else {
+                console.warn("Telegram WebApp not detected - running in test mode");
+                window.Telegram = {
+                    WebApp: {
+                        CloudStorage: {
+                            getItem: (key) => localStorage.getItem(key),
+                            setItem: (key, value) => localStorage.setItem(key, value)
+                        },
+                        openInvoice: (invoice, callback) => {
+                            console.log("Invoice:", invoice);
+                            if (confirm(`Pay ${invoice.prices[0].amount/100}⭐ for ${invoice.description}?`)) {
+                                callback('paid');
+                            } else {
+                                callback('cancelled');
+                            }
+                        }
+                    }
+                };
+            }
+
+            // Load saved data
+            await loadData();
+            
+            // Set up click handler
+            document.getElementById('clickButton').addEventListener('click', handleClick);
+            
+            // Set up navigation
+            document.getElementById('shopButton').addEventListener('click', () => {
+                document.getElementById('mainPage').classList.remove('active');
+                document.getElementById('shopPage').classList.add('active');
+            });
+            
+            document.getElementById('backButton').addEventListener('click', () => {
+                document.getElementById('shopPage').classList.remove('active');
+                document.getElementById('mainPage').classList.add('active');
+            });
+            
+            // Set up purchase buttons
+            document.getElementById('buy1Day').addEventListener('click', () => purchasePremium('1day'));
+            document.getElementById('buyLifetime').addEventListener('click', () => purchasePremium('lifetime'));
+            
+            // Start energy check interval
+            setInterval(checkEnergy, 60000);
+            console.log("App initialized");
+        });
+
+        // Rest of your functions (handleClick, purchasePremium, etc.) go here
+        // Use the debug versions I provided above
+    </script>
 </body>
 </html>
